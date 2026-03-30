@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Daily Gospel for Kids">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#191a1a">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23191a1a'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='%23d97757'>📖</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Daily Gospel for Kids</title>
+  <style>
+    :root {
+      --accent: #d97757;
+      --accent-dim: #b8614a;
+      --accent-glow: rgba(217, 119, 87, 0.12);
+      --bg: #191a1a;
+      --bg-card: #1f2121;
+      --bg-header: #141515;
+      --bg-nav: #1b1c1c;
+      --bg-instruction: #232525;
+      --text: #e8e4de;
+      --text-secondary: #a8a29e;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.14);
+      --shadow: rgba(0, 0, 0, 0.25);
+    }
+
+    html { font-size: 112%; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    ::selection { background: rgba(217, 119, 87, 0.35); }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      background: url('hero-bg.jpg') center center / cover no-repeat;
+      filter: blur(40px) brightness(0.18) saturate(1.4);
+      transform: scale(1.15);
+      z-index: -1;
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('hero-bg.jpg') center center / cover no-repeat;
+      filter: brightness(0.3);
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      padding: 2rem;
+      max-width: 600px;
+    }
+
+    .hero-icon { font-size: 2.5rem; display: block; margin-bottom: 1.25rem; opacity: 0.9; }
+
+    .hero-title {
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-liturgical {
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.72rem, 2vw, 0.82rem);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.06em;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s ease;
+    }
+
+    .hero-scroll:hover { color: var(--accent); }
+    .hero-scroll-arrow { font-size: 1.2rem; animation: bounce 2s infinite; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(5px); }
+    }
+
+    /* Top bar: back link + language toggle */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      position: sticky;
+      top: 0.75rem;
+      z-index: 99;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.1rem;
+      background: rgba(27, 28, 28, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      transition: all 0.2s ease;
+    }
+
+    .back-link:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Language toggle */
+    .lang-toggle {
+      display: flex;
+      background: rgba(27, 28, 28, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.68rem;
+      font-weight: 500;
+      padding: 0.5rem 0.85rem;
+      cursor: pointer;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      transition: all 0.2s ease;
+      letter-spacing: 0.02em;
+      position: relative;
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .lang-btn:not(.active):hover {
+      color: var(--accent);
+    }
+
+    /* Main */
+    main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 1.25rem 1.25rem 5rem;
+    }
+
+    /* Date header */
+    .date-header { text-align: center; margin-bottom: 1.5rem; }
+
+    .date-header .day-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .date-header .day-details {
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      letter-spacing: 0.04em;
+    }
+
+    .date-header .season-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 100px;
+      padding: 0.2rem 0.7rem;
+      margin-top: 0.6rem;
+      opacity: 0.85;
+    }
+
+    /* Scripture card */
+    .scripture-card {
+      background: rgba(31, 33, 33, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .scripture-card:hover { border-color: var(--border-hover); }
+
+    .scripture-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1.1rem 1.5rem 0;
+    }
+
+    .scripture-label-icon { font-size: 1.2rem; line-height: 1; }
+
+    .scripture-label-text {
+      font-size: 0.62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+
+    .scripture-reference {
+      padding: 0.5rem 1.5rem 0;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .scripture-body { padding: 1rem 1.5rem 1.5rem; }
+
+    .scripture-text {
+      font-size: 1.05rem;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(232, 228, 222, 0.92);
+      font-style: italic;
+      border-left: 3px solid var(--accent-dim);
+      padding-left: 1.15rem;
+      margin: 0.75rem 0;
+    }
+
+    /* Explanation card */
+    .explanation-card {
+      background: rgba(31, 33, 33, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .explanation-card:hover { border-color: var(--border-hover); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-header-icon { font-size: 1.3rem; line-height: 1; }
+
+    .card-header-title {
+      font-size: 0.62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+
+    .card-body { padding: 1.15rem 1.5rem 1.5rem; }
+
+    .card-body p {
+      font-size: 0.92rem;
+      font-weight: 300;
+      line-height: 1.85;
+      color: rgba(232, 228, 222, 0.85);
+    }
+
+    .questions-list { list-style: none; padding: 0; }
+
+    .questions-list li {
+      font-size: 0.92rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: rgba(232, 228, 222, 0.85);
+      padding: 0.85rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+    }
+
+    .questions-list li:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .question-number {
+      flex-shrink: 0;
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 50%;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 0.15rem;
+    }
+
+    .family-prayer {
+      background: rgba(35, 37, 37, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .family-prayer p {
+      font-size: 0.85rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: rgba(232, 228, 222, 0.8);
+      text-align: center;
+    }
+
+    .day-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      margin: 2rem 0 1rem;
+    }
+
+    .day-nav button {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.45rem 1.1rem;
+      border-radius: 100px;
+      cursor: pointer;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      transition: all 0.2s ease;
+      letter-spacing: 0.02em;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .day-nav button:hover { border-color: var(--accent); color: var(--accent); }
+
+    .day-nav .nav-today {
+      font-size: 0.62rem;
+      color: var(--accent);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      border-top: 1px solid var(--border);
+      background: rgba(20, 21, 21, 0.6);
+    }
+
+    footer a { color: var(--accent); text-decoration: none; transition: opacity 0.2s ease; }
+    footer a:hover { opacity: 0.75; }
+
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2rem 0 1rem;
+      padding: 0 0.25rem;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-divider h2 {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .fade-content { transition: opacity 0.25s ease; }
+    .fade-content.fading { opacity: 0; }
+
+    @media (max-width: 480px) {
+      .hero { min-height: 100vh; }
+      main { padding: 0.75rem 0.75rem 3rem; }
+      .scripture-body { padding: 0.85rem 1.15rem 1.25rem; }
+      .scripture-text { font-size: 0.98rem; padding-left: 1rem; }
+      .scripture-label { padding: 1rem 1.15rem 0; }
+      .scripture-reference { padding: 0.5rem 1.15rem 0; font-size: 0.98rem; }
+      .card-header { padding: 1rem 1.15rem; }
+      .card-body { padding: 1rem 1.15rem 1.25rem; }
+      .date-header .day-number { font-size: 1.8rem; }
+      .lang-btn { font-size: 0.65rem; padding: 0.45rem 0.7rem; }
+      .back-link { font-size: 0.68rem; padding: 0.45rem 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-bg"></div>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <span class="hero-icon">📖</span>
+    <h1 class="hero-title" id="hero-title">Daily Gospel for Kids</h1>
+    <p class="hero-liturgical" id="liturgical-day-label"></p>
+    <p class="hero-subtitle" id="hero-subtitle">Let the children come to me — Matthew 19:14</p>
+  </div>
+  <a href="#gospel-content" class="hero-scroll">
+    <span id="hero-scroll-text">Today's Reading</span>
+    <span class="hero-scroll-arrow">▾</span>
+  </a>
+</section>
+
+<main>
+  <div class="top-bar">
+    <a class="back-link" href="daily-prayers.html" id="back-link">← Back to Prayers</a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+    </div>
+  </div>
+
+  <div id="gospel-content" class="fade-content">
+    <div class="date-header">
+      <div class="day-number" id="day-number"></div>
+      <div class="day-details" id="day-details"></div>
+      <div class="season-badge" id="season-badge"></div>
+    </div>
+
+    <div class="scripture-card">
+      <div class="scripture-label">
+        <span class="scripture-label-icon">✝&#xFE0E;</span>
+        <span class="scripture-label-text" id="lbl-gospel">Today's Gospel</span>
+      </div>
+      <div class="scripture-reference" id="scripture-ref"></div>
+      <div class="scripture-body">
+        <p class="scripture-text" id="scripture-text"></p>
+      </div>
+    </div>
+
+    <div class="explanation-card">
+      <div class="card-header">
+        <span class="card-header-icon">💡</span>
+        <span class="card-header-title" id="lbl-meaning">What This Means</span>
+      </div>
+      <div class="card-body">
+        <p id="explanation-text"></p>
+      </div>
+    </div>
+
+    <div class="explanation-card">
+      <div class="card-header">
+        <span class="card-header-icon">💬</span>
+        <span class="card-header-title" id="lbl-discuss">Let's Talk About It</span>
+      </div>
+      <div class="card-body">
+        <ul class="questions-list" id="questions-list"></ul>
+      </div>
+    </div>
+
+    <div class="section-divider">
+      <h2 id="lbl-prayer-divider">Family Prayer</h2>
+    </div>
+
+    <div class="explanation-card">
+      <div class="card-header">
+        <span class="card-header-icon">🙏</span>
+        <span class="card-header-title" id="lbl-pray">Pray Together</span>
+      </div>
+      <div class="card-body">
+        <div class="family-prayer" id="family-prayer"></div>
+      </div>
+    </div>
+
+    <div class="day-nav">
+      <button onclick="changeDay(-1)" id="btn-prev">← Yesterday</button>
+      <span class="nav-today" id="nav-today-label">Today</span>
+      <button onclick="changeDay(1)" id="btn-next">Tomorrow →</button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p id="footer-text">✝&#xFE0E; Ad Maiorem Dei Gloriam ✝&#xFE0E;</p>
+  <p style="margin-top: 0.5rem;"><a href="daily-prayers.html">Daily Prayers</a></p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// UI LABELS
+// ═══════════════════════════════════════════════════════════════
+var ui = {
+  en: {
+    heroTitle: "Daily Gospel for Kids",
+    heroSubtitle: "Let the children come to me \u2014 Matthew 19:14",
+    heroScroll: "Today\u2019s Reading",
+    backLink: "\u2190 Back to Prayers",
+    lblGospel: "Today\u2019s Gospel",
+    lblMeaning: "What This Means",
+    lblDiscuss: "Let\u2019s Talk About It",
+    lblPrayerDivider: "Family Prayer",
+    lblPray: "Pray Together",
+    btnPrev: "\u2190 Yesterday",
+    btnNext: "Tomorrow \u2192",
+    today: "Today",
+    yesterday: "Yesterday",
+    tomorrow: "Tomorrow",
+    months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    days: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+    seasonNames: { advent:'Advent', christmas:'Christmas', lent:'Lent', passion:'Holy Week', easter:'Easter', ordinary:'Ordinary Time' }
+  },
+  es: {
+    heroTitle: "Evangelio Diario para Ni\u00f1os",
+    heroSubtitle: "Dejen que los ni\u00f1os vengan a m\u00ed \u2014 Mateo 19:14",
+    heroScroll: "Lectura de Hoy",
+    backLink: "\u2190 Volver a Oraciones",
+    lblGospel: "Evangelio de Hoy",
+    lblMeaning: "Qu\u00e9 Significa Esto",
+    lblDiscuss: "Hablemos de Esto",
+    lblPrayerDivider: "Oraci\u00f3n en Familia",
+    lblPray: "Recemos Juntos",
+    btnPrev: "\u2190 Ayer",
+    btnNext: "Ma\u00f1ana \u2192",
+    today: "Hoy",
+    yesterday: "Ayer",
+    tomorrow: "Ma\u00f1ana",
+    months: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    days: ['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'],
+    seasonNames: { advent:'Adviento', christmas:'Navidad', lent:'Cuaresma', passion:'Semana Santa', easter:'Pascua', ordinary:'Tiempo Ordinario' }
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ENGLISH PASSAGES
+// ═══════════════════════════════════════════════════════════════
+var passages_en = [
+  {
+    ref: "Matthew 19:14",
+    text: "Jesus said, \u201CLet the little children come to me, and do not hinder them, for the kingdom of heaven belongs to such as these.\u201D",
+    explain: "Some grown-ups tried to keep children away from Jesus, but Jesus said no \u2014 He wanted the kids to come close! Jesus loves children so much. He says that kids have special hearts that are really good at loving God.",
+    questions: ["Why do you think Jesus wanted the children to come to Him?", "What would you say to Jesus if you could sit on His lap right now?"],
+    prayer: "Dear Jesus, thank You for loving us so much \u2014 especially little kids. Help us to always run to You with happy hearts. Amen."
+  },
+  {
+    ref: "Mark 4:39",
+    text: "He got up, rebuked the wind and said to the waves, \u201CQuiet! Be still!\u201D Then the wind died down and it was completely calm.",
+    explain: "Jesus and His friends were in a boat when a huge, scary storm came. The waves were crashing and everyone was afraid! But Jesus just stood up and told the storm to stop \u2014 and it did, right away. Jesus is so powerful that even the wind and the waves listen to Him.",
+    questions: ["Have you ever been scared during a storm? What did you do?", "How does it make you feel to know Jesus can calm any storm?"],
+    prayer: "Dear Jesus, when we feel scared, help us remember that You are bigger and stronger than any storm. Please give us peace in our hearts. Amen."
+  },
+  {
+    ref: "Matthew 14:19\u201320",
+    text: "Taking the five loaves and the two fish and looking up to heaven, he gave thanks and broke the loaves. They all ate and were satisfied, and the disciples picked up twelve basketfuls of broken pieces that were left over.",
+    explain: "A huge crowd of people were hungry and there was only one little boy\u2019s lunch \u2014 five pieces of bread and two fish. But Jesus said thank you to God, broke the bread, and it kept multiplying! Over 5,000 people ate until they were full, and there were still leftovers. Jesus can do amazing things with even the smallest gifts.",
+    questions: ["If you had to share your lunch with everyone, how would you feel?", "What small thing can you share with others today?"],
+    prayer: "Dear Jesus, thank You for always giving us what we need. Help us to be generous and share what we have, even when it feels like it\u2019s not much. Amen."
+  },
+  {
+    ref: "Mark 4:30\u201332",
+    text: "He said, \u201CWhat shall we say the kingdom of God is like? It is like a mustard seed, which is the smallest of all seeds on earth. Yet when planted, it grows and becomes the largest of all garden plants.\u201D",
+    explain: "Jesus told a story about a tiny, tiny seed \u2014 one of the smallest you can imagine. But when you plant it and take care of it, it grows into a huge plant! Jesus is saying that even small acts of love and kindness can grow into something really, really big.",
+    questions: ["What\u2019s the smallest good thing you did today? How might it grow?", "Can you think of a time when something small turned into something big?"],
+    prayer: "Dear Jesus, help us do small acts of love every day, knowing that You can make them grow into something beautiful. Amen."
+  },
+  {
+    ref: "John 10:14",
+    text: "I am the good shepherd; I know my sheep and my sheep know me.",
+    explain: "Jesus says He\u2019s like a shepherd \u2014 someone who takes care of sheep. A good shepherd knows every single one of his sheep by name. He keeps them safe, feeds them, and never leaves them alone. Jesus knows each of us by name, and He takes care of us just like that!",
+    questions: ["What does it feel like to know Jesus knows your name?", "How does Jesus take care of you and our family?"],
+    prayer: "Dear Jesus, our Good Shepherd, thank You for knowing us and loving us. Help us to listen to Your voice and follow You always. Amen."
+  },
+  {
+    ref: "Luke 15:4\u20136",
+    text: "Suppose one of you has a hundred sheep and loses one of them. Doesn\u2019t he leave the ninety-nine and go after the lost one until he finds it? And when he finds it, he joyfully puts it on his shoulders and goes home.",
+    explain: "Jesus told a story about a shepherd who had 100 sheep. When just one got lost, he left all the others to go find it! And when he found that one little sheep, he was so happy he carried it all the way home on his shoulders. That\u2019s how much Jesus loves each one of us \u2014 He will always come looking for us.",
+    questions: ["Have you ever lost something special and then found it? How did you feel?", "How does it feel to know Jesus would come looking for you?"],
+    prayer: "Dear Jesus, thank You for never giving up on us. Even when we wander away, You always come to find us and bring us home. Amen."
+  },
+  {
+    ref: "Matthew 7:24\u201325",
+    text: "Everyone who hears these words of mine and puts them into practice is like a wise man who built his house on the rock. The rain came down, the streams rose, and the winds blew and beat against that house; yet it did not fall, because it had its foundation on the rock.",
+    explain: "Jesus told a story about two builders. The wise one built his house on solid rock, and when a big storm came, the house stood strong! The foolish one built on sand, and his house fell down \u2014 crash! Jesus is saying that when we listen to Him and do what He says, we\u2019re like the wise builder. His words make us strong.",
+    questions: ["What\u2019s stronger: a sandcastle or a rock? Why?", "What\u2019s one thing Jesus teaches us that makes our family strong?"],
+    prayer: "Dear Jesus, help us build our lives on You, our strong rock. When hard times come, keep our family standing firm together. Amen."
+  },
+  {
+    ref: "John 8:12",
+    text: "Jesus spoke to them, saying, \u201CI am the light of the world. Whoever follows me will never walk in darkness, but will have the light of life.\u201D",
+    explain: "Imagine being in a dark room \u2014 you can\u2019t see anything and it\u2019s a little scary. But then someone turns on a bright light and suddenly you can see everything! Jesus says He is like that light. When we follow Him, we never have to be afraid of the dark because He lights up our path.",
+    questions: ["What happens when you turn on a light in a dark room?", "How can Jesus be a light for us when we feel lost or confused?"],
+    prayer: "Dear Jesus, You are our light! When things feel dark or scary, help us remember that You are always shining for us. Amen."
+  },
+  {
+    ref: "Matthew 5:14\u201316",
+    text: "You are the light of the world. A town built on a hill cannot be hidden. Neither do people light a lamp and put it under a bowl. Instead they put it on its stand, and it gives light to everyone in the house.",
+    explain: "Jesus told His friends that they are lights too! He said it would be silly to turn on a lamp and then cover it with a bowl \u2014 you\u2019d lose all the light. Instead, you put it up high so everyone can see. Jesus wants us to be bright lights by being kind, loving, and good so that everyone around us can see God\u2019s love.",
+    questions: ["What are some ways you can be a light to others today?", "Who in our family is a really good light for others?"],
+    prayer: "Dear Jesus, help us shine our lights brightly today. Let people see Your love in everything we do and say. Amen."
+  },
+  {
+    ref: "Matthew 6:26",
+    text: "Look at the birds of the air; they do not sow or reap or store away in barns, and yet your heavenly Father feeds them. Are you not much more valuable than they?",
+    explain: "Jesus pointed up at the birds flying in the sky and said, \u201CSee those birds? They don\u2019t have kitchens or grocery stores, but God makes sure they always have food.\u201D Then He said, \u201CAnd you are worth so much more to God than the birds!\u201D God always takes care of us because He loves us.",
+    questions: ["Next time you see a bird, what will you remember?", "Can you think of a time when God took care of something our family needed?"],
+    prayer: "Dear God, thank You for taking care of the birds, the flowers, and especially us. Help us trust that You will always give us what we need. Amen."
+  },
+  {
+    ref: "Luke 10:30\u201334",
+    text: "A man was going down from Jerusalem to Jericho, when he was attacked by robbers. A Samaritan, as he traveled, came where the man was; and when he saw him, he took pity on him. He bandaged his wounds, put the man on his own donkey, brought him to an inn and took care of him.",
+    explain: "Jesus told a story about a man who got hurt on the road. Two important people walked right past him without helping! But then a stranger \u2014 someone most people wouldn\u2019t expect to help \u2014 stopped, bandaged his wounds, and took care of him. Jesus is teaching us that being kind to everyone, even strangers, is really important.",
+    questions: ["How would you feel if you were hurt and no one stopped to help?", "Who is someone you can be extra kind to today?"],
+    prayer: "Dear Jesus, give us eyes to see people who need help and brave hearts to stop and care for them, just like the Good Samaritan. Amen."
+  },
+  {
+    ref: "John 6:35",
+    text: "Then Jesus declared, \u201CI am the bread of life. Whoever comes to me will never go hungry, and whoever believes in me will never be thirsty.\u201D",
+    explain: "When your tummy rumbles, you need food, right? Jesus says He is like bread for our hearts and our souls. Just like our bodies need food to be strong, our hearts need Jesus to be happy and full. When we pray and spend time with Jesus, He fills us up with love and joy.",
+    questions: ["What\u2019s your favorite food that fills up your tummy?", "How do you think Jesus fills up our hearts?"],
+    prayer: "Dear Jesus, Bread of Life, fill our hearts with Your love today. May we never forget that You are everything we need. Amen."
+  },
+  {
+    ref: "Luke 19:1\u20136",
+    text: "A man was there by the name of Zacchaeus; he was a chief tax collector and was wealthy. He wanted to see who Jesus was, but because he was short he could not see over the crowd. So he ran ahead and climbed a sycamore-fig tree to see him. When Jesus reached the spot, he looked up and said, \u201CZacchaeus, come down immediately. I must stay at your house today.\u201D",
+    explain: "Zacchaeus was a little man that nobody liked because he took people\u2019s money unfairly. But he really wanted to see Jesus! So he climbed up a big tree. When Jesus walked by, He looked right up at Zacchaeus and said, \u201CCome down! I\u2019m coming to your house today!\u201D Jesus chose to be friends with someone everyone else ignored. After that, Zacchaeus changed and became kind and generous.",
+    questions: ["Have you ever felt too small to see something? What did you do?", "Jesus was friends with everyone, even people others didn\u2019t like. How can we be like that?"],
+    prayer: "Dear Jesus, thank You for seeing us and loving us no matter what. Help us to welcome everyone, just like You welcomed Zacchaeus. Amen."
+  },
+  {
+    ref: "Matthew 18:20",
+    text: "For where two or three gather in my name, there am I with them.",
+    explain: "Jesus made an amazing promise: whenever even just a few people get together to pray or talk about Him, He is right there with them! So when our family prays together, Jesus is sitting right here with us, listening and loving us. We can\u2019t see Him, but He\u2019s here.",
+    questions: ["Isn\u2019t it cool that Jesus is here with us right now? What would you like to tell Him?", "Where else could we invite Jesus to be with us today?"],
+    prayer: "Dear Jesus, thank You for being right here with our family. We love You and we\u2019re so glad You never leave us. Amen."
+  },
+  {
+    ref: "John 15:12",
+    text: "My command is this: Love each other as I have loved you.",
+    explain: "Jesus gave us the most important rule of all \u2014 love each other! And not just a little bit, but love each other the same big, huge way that He loves us. That means being patient, being kind, forgiving each other, and helping each other every single day.",
+    questions: ["How does Jesus love us? Can you think of examples?", "What\u2019s one way you can love someone in our family extra well today?"],
+    prayer: "Dear Jesus, Your love is so big and so strong. Help us love each other the way You love us \u2014 with patience, kindness, and forgiveness. Amen."
+  },
+  {
+    ref: "Mark 10:16",
+    text: "And he took the children in his arms, placed his hands on them and blessed them.",
+    explain: "When children came to see Jesus, He didn\u2019t just wave and say hello. He picked them up, held them in His arms, and blessed them! That means He prayed for good things for each child. Jesus loves to hold children close to His heart.",
+    questions: ["How does it feel when someone gives you a big hug?", "What blessing would you ask Jesus to give you today?"],
+    prayer: "Dear Jesus, we know You hold us close in Your arms. Bless our family today and fill us with Your love and peace. Amen."
+  },
+  {
+    ref: "Luke 11:9\u201310",
+    text: "So I say to you: Ask and it will be given to you; seek and you will find; knock and the door will be opened to you. For everyone who asks receives; the one who seeks finds; and to the one who knocks, the door will be opened.",
+    explain: "Jesus tells us to talk to God! He says it\u2019s like knocking on a door \u2014 when you knock, the door opens. When we ask God for help, He listens. When we look for Him, we find Him. God always answers when we call on Him.",
+    questions: ["What would you like to ask God for today?", "Have you ever prayed for something and then it happened?"],
+    prayer: "Dear God, thank You for always listening when we talk to You. Help us remember to ask, to seek, and to knock \u2014 because You always answer. Amen."
+  },
+  {
+    ref: "Matthew 5:9",
+    text: "Blessed are the peacemakers, for they will be called children of God.",
+    explain: "Jesus says that people who make peace are super special \u2014 God calls them His own children! Being a peacemaker means helping people get along, not fighting, saying sorry, and being kind when others are upset. When we make peace, we\u2019re acting just like God.",
+    questions: ["What does it mean to make peace? Can you give an example?", "How can you be a peacemaker at home or with your friends?"],
+    prayer: "Dear Jesus, Prince of Peace, help us be peacemakers today. When there\u2019s fighting or sadness, help us bring love and kindness. Amen."
+  },
+  {
+    ref: "John 14:27",
+    text: "Peace I leave with you; my peace I give you. I do not give to you as the world gives. Do not let your hearts be troubled and do not be afraid.",
+    explain: "Before Jesus left His friends, He gave them a very special gift \u2014 His peace. Not the kind of peace you get from a toy or a treat, but a deep, strong peace that stays in your heart even when things are hard. Jesus says, \u201CDon\u2019t be scared. I\u2019m giving you My peace.\u201D",
+    questions: ["What makes you feel peaceful and safe?", "When you feel worried, how can you ask Jesus for His peace?"],
+    prayer: "Dear Jesus, thank You for Your gift of peace. When our hearts feel troubled or afraid, fill us with the calm that only You can give. Amen."
+  },
+  {
+    ref: "Matthew 17:20",
+    text: "Truly I tell you, if you have faith as small as a mustard seed, you can say to this mountain, \u2018Move from here to there,\u2019 and it will move. Nothing will be impossible for you.",
+    explain: "A mustard seed is one of the tiniest seeds there is \u2014 you could barely see it! But Jesus says that even a little bit of faith that tiny can do amazing things. With God, nothing is impossible! You don\u2019t need huge faith \u2014 even a small faith, when you trust God with all your heart, can move mountains.",
+    questions: ["What is something that seems really hard or impossible right now?", "How can we trust God with it, even if our faith feels small?"],
+    prayer: "Dear Jesus, even when our faith feels tiny, we know You can do incredible things. Help us trust You with our whole hearts. Amen."
+  },
+  {
+    ref: "Luke 2:11\u201312",
+    text: "Today in the town of David a Savior has been born to you; he is the Messiah, the Lord. This will be a sign to you: You will find a baby wrapped in cloths and lying in a manger.",
+    explain: "On the very first Christmas, angels appeared to shepherds in the fields at night and told them the most exciting news ever: a special baby \u2014 Jesus, the Savior \u2014 had just been born! And they\u2019d find Him not in a palace, but in a manger, which is where animals eat. God came to us as a tiny baby. Amazing!",
+    questions: ["Why do you think God chose to come as a baby instead of a king on a throne?", "What\u2019s your favorite part of the Christmas story?"],
+    prayer: "Dear Jesus, thank You for coming to earth as a little baby so You could be close to us. Help us always remember the true meaning of Christmas. Amen."
+  },
+  {
+    ref: "John 13:34",
+    text: "A new command I give you: Love one another. As I have loved you, so you must love one another.",
+    explain: "Jesus gave us a brand-new rule that\u2019s also the most important one: love each other! And not just a little \u2014 love each other the same way Jesus loves us. That\u2019s a really big love: patient, kind, forgiving, and always there. This is how people can tell we belong to Jesus.",
+    questions: ["How do people know we love them? What does love look like?", "What\u2019s one loving thing you can do for someone today?"],
+    prayer: "Dear Jesus, fill our hearts with so much love that it spills out to everyone around us. Help us love like You do. Amen."
+  },
+  {
+    ref: "Mark 2:5",
+    text: "When Jesus saw their faith, he said to the paralyzed man, \u201CSon, your sins are forgiven.\u201D",
+    explain: "A man who couldn\u2019t walk had four amazing friends. They wanted to bring him to Jesus so badly that when they couldn\u2019t get through the crowd, they climbed up on the roof, made a hole, and lowered their friend down right in front of Jesus! When Jesus saw how much they believed, He healed the man. Good friends help each other get closer to Jesus.",
+    questions: ["What would you do to help a friend who needed Jesus?", "Who are the friends that help you be closer to God?"],
+    prayer: "Dear Jesus, thank You for our friends. Help us be the kind of friends who carry each other closer to You. Amen."
+  },
+  {
+    ref: "Matthew 28:20",
+    text: "And surely I am with you always, to the very end of the age.",
+    explain: "These were some of Jesus\u2019s very last words to His friends before He went up to heaven. He promised, \u201CI am with you always.\u201D Not just sometimes, not just on good days \u2014 always! Every single moment, Jesus is right there with us.",
+    questions: ["When do you need to remember that Jesus is with you the most?", "Is there a place you go where it\u2019s hard to remember Jesus is there?"],
+    prayer: "Dear Jesus, thank You for Your promise to be with us always. Help us feel You close, today and every day, no matter where we go. Amen."
+  },
+  {
+    ref: "Luke 6:31",
+    text: "Do to others as you would have them do to you.",
+    explain: "This is called the Golden Rule, and it\u2019s one of the most important things Jesus ever taught. It means: treat people the way you want to be treated! If you want people to be nice to you, be nice to them. If you want people to share with you, share with them. It\u2019s that simple!",
+    questions: ["How do you want other people to treat you?", "Is there someone you can treat extra nicely today?"],
+    prayer: "Dear Jesus, help us treat everyone the way we want to be treated \u2014 with kindness, respect, and love. Amen."
+  },
+  {
+    ref: "John 11:35",
+    text: "Jesus wept.",
+    explain: "This is the shortest verse in the whole Bible, but it teaches us something huge: Jesus cries too. When His friend Lazarus died, Jesus was so sad that He cried. This tells us that it\u2019s okay to feel sad and to cry. Jesus understands our feelings because He has feelings just like us.",
+    questions: ["How does it feel to know that even Jesus cried when He was sad?", "What do you do when you feel sad? Who do you talk to?"],
+    prayer: "Dear Jesus, thank You for understanding how we feel. When we are sad, please be close to us and help us feel Your love. Amen."
+  },
+  {
+    ref: "Luke 15:8\u201310",
+    text: "What woman having ten silver coins, if she loses one coin, does not light a lamp, sweep the house, and search carefully until she finds it? When she has found it, she calls together her friends and neighbors, saying, \u2018Rejoice with me, for I have found the coin that I had lost.\u2019",
+    explain: "Jesus told a story about a woman who had ten special coins and lost one. She searched everywhere \u2014 under rugs, behind furniture, in every corner \u2014 until she found it! Then she was SO happy she threw a party. Jesus says that\u2019s how happy God is when someone who was lost comes back to Him. Every single person matters that much to God.",
+    questions: ["Have you ever lost a favorite toy and then found it? How did you feel?", "How does it feel to know God would search everywhere for you?"],
+    prayer: "Dear God, thank You for loving each one of us so much that You would search everywhere to find us. We are so precious to You! Amen."
+  },
+  {
+    ref: "Matthew 6:9\u201313",
+    text: "This, then, is how you should pray: \u2018Our Father in heaven, hallowed be your name, your kingdom come, your will be done, on earth as it is in heaven. Give us today our daily bread. And forgive us our debts, as we also have forgiven our debtors. And lead us not into temptation, but deliver us from the evil one.\u2019",
+    explain: "When Jesus\u2019s friends asked, \u201CHow should we pray?\u201D Jesus taught them this prayer \u2014 the Our Father! It\u2019s the most special prayer because Jesus Himself gave it to us. It starts by praising God, then asks for what we need, and ends by asking God to keep us safe. It\u2019s the perfect prayer.",
+    questions: ["What part of the Our Father is your favorite?", "What would you add if you could say one more thing to God?"],
+    prayer: "Our Father, who art in heaven, hallowed be Thy name. Thy kingdom come, Thy will be done, on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us. And lead us not into temptation, but deliver us from evil. Amen."
+  },
+  {
+    ref: "Mark 6:50",
+    text: "They all saw him and were terrified. But immediately he spoke to them and said, \u201CTake courage! It is I. Don\u2019t be afraid.\u201D",
+    explain: "Jesus\u2019s friends were out in their boat at night when they saw someone walking on the water! They were so scared! But it was Jesus, and the first thing He said was, \u201CDon\u2019t be afraid! It\u2019s me!\u201D Whenever we\u2019re scared, Jesus says the same thing to us: \u201CBe brave! I\u2019m right here.\u201D",
+    questions: ["What are some things that scare you? What do you do when you feel afraid?", "How can you remember that Jesus says \u201CDon\u2019t be afraid\u201D when you\u2019re scared?"],
+    prayer: "Dear Jesus, when we feel scared, help us hear Your voice saying, \u201CDon\u2019t be afraid!\u201D Give us courage and help us trust You. Amen."
+  },
+  {
+    ref: "Matthew 18:21\u201322",
+    text: "Then Peter came to Jesus and asked, \u201CLord, how many times shall I forgive my brother or sister who sins against me? Up to seven times?\u201D Jesus answered, \u201CI tell you, not seven times, but seventy-seven times.\u201D",
+    explain: "Peter thought he was being really generous by forgiving someone seven whole times. But Jesus said, \u201CNo, not just seven \u2014 forgive seventy-seven times!\u201D He wasn\u2019t really counting. He meant we should always forgive, over and over, without keeping score. That\u2019s how God forgives us, and that\u2019s how we should forgive each other.",
+    questions: ["Is it easy or hard to forgive someone who hurts your feelings?", "How does it feel when someone forgives you?"],
+    prayer: "Dear Jesus, help us forgive others the way You forgive us \u2014 again and again, without keeping count. Fill our hearts with mercy. Amen."
+  },
+  {
+    ref: "Luke 12:6\u20137",
+    text: "Are not five sparrows sold for two pennies? Yet not one of them is forgotten by God. Indeed, the very hairs of your head are all numbered. Don\u2019t be afraid; you are worth more than many sparrows.",
+    explain: "Jesus says that God cares about even the tiniest little sparrows \u2014 not a single one is forgotten! And then Jesus says, \u201CGod even knows how many hairs are on your head.\u201D That\u2019s how much attention God pays to you. You are so incredibly valuable and precious to Him.",
+    questions: ["Can you count the hairs on your head? God can! How does that make you feel?", "If God cares about sparrows, how much more does He care about you?"],
+    prayer: "Dear God, thank You for paying attention to every little detail about us. We are never forgotten. Help us remember how precious we are to You. Amen."
+  },
+  {
+    ref: "John 14:2\u20133",
+    text: "My Father\u2019s house has many rooms; if that were not so, would I have told you that I am going there to prepare a place for you? And if I go and prepare a place for you, I will come back and take you to be with me.",
+    explain: "Jesus told His friends that heaven is like a huge, beautiful house with tons of rooms \u2014 and He\u2019s getting a special room ready just for each of us! He promised to come back and bring us there so we can be with Him forever. How awesome is that?",
+    questions: ["What do you think your room in heaven will be like?", "What are you most excited about when you think about being with Jesus forever?"],
+    prayer: "Dear Jesus, thank You for preparing a special place for us in heaven. Help us live today in a way that brings us closer to You. Amen."
+  },
+  {
+    ref: "Matthew 7:7",
+    text: "Ask and it will be given to you; seek and you will find; knock and the door will be opened to you.",
+    explain: "Jesus is telling us something wonderful: talk to God! Ask Him for things. Look for Him. Knock on His door. He\u2019s not hiding \u2014 He wants to be found! God loves when we pray and come to Him with everything on our hearts.",
+    questions: ["What is something you\u2019d like to ask God for right now?", "Where do you see God in your life?"],
+    prayer: "Dear God, thank You for always being ready to listen. Help us come to You with everything \u2014 our hopes, our worries, and our joys. Amen."
+  },
+  {
+    ref: "Luke 18:16",
+    text: "Jesus called the children to him and said, \u201CLet the little children come to me, and do not hinder them, for the kingdom of God belongs to such as these.\u201D",
+    explain: "Jesus made a really big deal about children. He said the kingdom of God belongs to people like kids! That\u2019s because children trust easily, love openly, and believe with their whole hearts. Jesus wants all of us to have hearts like children.",
+    questions: ["What do you think makes kids so special to Jesus?", "How can grown-ups be more like kids in the way they love God?"],
+    prayer: "Dear Jesus, thank You for telling us that Your kingdom belongs to kids like us. Help us always keep our childlike trust in You. Amen."
+  },
+  {
+    ref: "Matthew 25:35\u201336",
+    text: "For I was hungry and you gave me something to eat, I was thirsty and you gave me something to drink, I was a stranger and you invited me in, I needed clothes and you clothed me.",
+    explain: "Jesus says something amazing: when we help someone who is hungry, thirsty, lonely, or cold \u2014 we are actually helping Jesus! Every person we are kind to, it\u2019s like being kind to Jesus Himself. So every time we share, help, or welcome someone, we\u2019re showing love to God.",
+    questions: ["How can we help someone who is hungry or lonely?", "If Jesus was the person you helped today, what would you do for Him?"],
+    prayer: "Dear Jesus, open our eyes to see You in everyone we meet. Help us feed the hungry, welcome the lonely, and love everyone as if they were You. Amen."
+  },
+  {
+    ref: "John 15:5",
+    text: "I am the vine; you are the branches. If you remain in me and I in you, you will bear much fruit; apart from me you can do nothing.",
+    explain: "Jesus used a picture from nature to explain how much we need Him. A branch on a vine gets its food and water from the vine \u2014 without it, the branch dries up! Jesus says He is the vine and we are the branches. When we stay close to Him, we grow strong and do beautiful things. Without Him, we can\u2019t.",
+    questions: ["Have you ever seen a branch that fell off a tree? What happened to it?", "How can we stay connected to Jesus every day?"],
+    prayer: "Dear Jesus, You are our vine and we are Your branches. Help us stay close to You so we can grow strong and bear good fruit. Amen."
+  },
+  {
+    ref: "Matthew 5:44",
+    text: "But I tell you, love your enemies and pray for those who persecute you.",
+    explain: "This is one of the hardest things Jesus ever said: love the people who are mean to you, and pray for them! That sounds really tough, right? But Jesus showed us how \u2014 even when people were hurting Him, He prayed for them. When we love even the people who are hard to love, we become more like Jesus.",
+    questions: ["Is there someone who\u2019s been unkind to you? Can we pray for them together?", "Why do you think Jesus asks us to love even people who are mean?"],
+    prayer: "Dear Jesus, loving our enemies is really hard. Please fill our hearts with Your love so we can pray for people who hurt us, just like You did. Amen."
+  },
+  {
+    ref: "Mark 1:17",
+    text: "\u201CCome, follow me,\u201D Jesus said, \u201Cand I will send you out to fish for people.\u201D",
+    explain: "Jesus was walking by the sea when He saw some fishermen. He said, \u201CFollow me, and instead of catching fish, you\u2019ll help bring people to God!\u201D And you know what? They dropped their fishing nets right away and followed Him. Jesus is calling each of us too \u2014 to follow Him and share His love with others.",
+    questions: ["If Jesus walked up to you today and said \u201CFollow me,\u201D what would you do?", "How can we \u201Cfish for people\u201D by sharing God\u2019s love?"],
+    prayer: "Dear Jesus, we want to follow You! Help us be brave enough to drop everything and say yes to You every day. Amen."
+  },
+  {
+    ref: "Luke 17:15\u201316",
+    text: "One of them, when he saw he was healed, came back, praising God in a loud voice. He threw himself at Jesus\u2019 feet and thanked him.",
+    explain: "Jesus healed ten people who were very sick \u2014 all ten of them! But only one came back to say thank you. Just one! Jesus was a little sad that the others forgot. This teaches us how important it is to say thank you \u2014 to God and to everyone who helps us.",
+    questions: ["Do you always remember to say thank you? What are you thankful for today?", "Why do you think saying thank you is so important to Jesus?"],
+    prayer: "Dear Jesus, we don\u2019t want to be like the nine who forgot. Thank You for everything You give us! Help us have grateful hearts every day. Amen."
+  },
+  {
+    ref: "John 1:5",
+    text: "The light shines in the darkness, and the darkness has not overcome it.",
+    explain: "Have you ever turned on a flashlight in a dark room? The darkness can\u2019t stop the light \u2014 the light always wins! That\u2019s what Jesus is like. Even when things seem dark and scary in the world, Jesus\u2019s light keeps shining and the darkness can never, ever put it out.",
+    questions: ["What happens to darkness when you turn on a light?", "How can Jesus\u2019s light help us when we feel sad or afraid?"],
+    prayer: "Dear Jesus, You are the light that darkness can never overcome. Shine brightly in our hearts and our home. Amen."
+  },
+  {
+    ref: "Matthew 11:28",
+    text: "Come to me, all you who are weary and burdened, and I will give you rest.",
+    explain: "Sometimes we feel tired \u2014 not just in our bodies, but in our hearts too. Maybe we\u2019re worried or sad or carrying something heavy inside. Jesus says, \u201CCome to me. Bring all of that to me, and I\u2019ll give you rest.\u201D He wants to carry our heavy stuff so we can feel light and peaceful.",
+    questions: ["What does it feel like when you\u2019re really tired and then you get to rest?", "Is there anything heavy on your heart that you want to give to Jesus?"],
+    prayer: "Dear Jesus, when we are tired and weary, we come to You. Take our worries and heavy feelings and give us Your peaceful rest. Amen."
+  },
+  {
+    ref: "Luke 8:24\u201325",
+    text: "The disciples went and woke him, saying, \u201CMaster, Master, we\u2019re going to drown!\u201D He got up and rebuked the wind and the raging waters; the storm subsided, and all was calm. \u201CWhere is your faith?\u201D he asked his disciples.",
+    explain: "Jesus\u2019s friends were in a boat during a terrible storm and Jesus was sleeping! They were so scared they woke Him up crying, \u201CWe\u2019re going to drown!\u201D Jesus stood up, told the storm to stop \u2014 and it did! Then He asked them, \u201CWhere is your faith?\u201D He wanted them to trust Him, even in the scariest moments.",
+    questions: ["What do you do when you\u2019re really scared? Do you remember to ask Jesus for help?", "Why do you think Jesus was able to sleep during the storm?"],
+    prayer: "Dear Jesus, even in the biggest storms of our lives, help us trust You. You are always in control and we don\u2019t need to be afraid. Amen."
+  },
+  {
+    ref: "Matthew 19:26",
+    text: "Jesus looked at them and said, \u201CWith man this is impossible, but with God all things are possible.\u201D",
+    explain: "Some things seem absolutely impossible \u2014 too hard, too big, too scary. But Jesus says that with God, nothing is impossible! There is nothing too big for God to handle. He can do anything, and He is on our side.",
+    questions: ["What\u2019s something that seems impossible to you right now?", "How does it feel to hear that God can do anything?"],
+    prayer: "Dear God, when things seem impossible, remind us that nothing is too hard for You. We trust that You can do all things. Amen."
+  },
+  {
+    ref: "Mark 9:36\u201337",
+    text: "He took a little child whom he placed among them. Taking the child in his arms, he said to them, \u201CWhoever welcomes one of these little children in my name welcomes me.\u201D",
+    explain: "Jesus\u2019s friends were arguing about who was the greatest. So Jesus picked up a little child and said, \u201CSee this child? When you welcome a child, you welcome Me.\u201D Jesus showed that the most important people aren\u2019t the biggest or the strongest \u2014 sometimes they\u2019re the smallest!",
+    questions: ["How does it feel to know that welcoming you is like welcoming Jesus?", "How can we welcome other kids and make them feel special?"],
+    prayer: "Dear Jesus, thank You for showing us that children are important to You. Help us welcome everyone with open arms, just as we would welcome You. Amen."
+  },
+  {
+    ref: "John 21:6",
+    text: "He said, \u201CThrow your net on the right side of the boat and you will find some.\u201D When they did, they were unable to haul the net in because of the large number of fish.",
+    explain: "Jesus\u2019s friends had been fishing all night and caught nothing \u2014 zero fish! Then Jesus told them to try the other side of the boat. They listened, and suddenly they caught so many fish the net was about to break! When we listen to Jesus, even when it doesn\u2019t make sense, amazing things happen.",
+    questions: ["Have you ever tried something a different way and it worked?", "Why is it important to listen to Jesus, even when we don\u2019t understand?"],
+    prayer: "Dear Jesus, help us listen to You and trust Your directions, even when it doesn\u2019t make sense to us. You always know the best way! Amen."
+  },
+  {
+    ref: "Luke 1:37",
+    text: "For no word from God will ever fail.",
+    explain: "The angel Gabriel said this to Mary when he told her she would be the mother of Jesus. It means that every single thing God promises will come true. God never breaks His promises \u2014 not one, not ever. What He says, He does.",
+    questions: ["What promises has God made that you know about?", "Can you think of a time when something good happened that God planned?"],
+    prayer: "Dear God, we trust that every promise You make will come true. Help us hold onto Your words and believe them with all our hearts. Amen."
+  },
+  {
+    ref: "Matthew 5:7",
+    text: "Blessed are the merciful, for they will be shown mercy.",
+    explain: "Jesus says that people who show mercy \u2014 which means being kind and forgiving even when someone doesn\u2019t deserve it \u2014 will receive mercy too! When we choose to be gentle and forgiving with others, God is gentle and forgiving with us.",
+    questions: ["What does it mean to show mercy to someone?", "When has someone shown you mercy?"],
+    prayer: "Dear Jesus, help us be merciful to others, especially when it\u2019s hard. Thank You for always being merciful and gentle with us. Amen."
+  },
+  {
+    ref: "John 20:29",
+    text: "Then Jesus told him, \u201CBecause you have seen me, you have believed; blessed are those who have not seen and yet have believed.\u201D",
+    explain: "After Jesus rose from the dead, His friend Thomas said he wouldn\u2019t believe it until he could see and touch Jesus. When Jesus appeared, Thomas believed! But Jesus said something special: \u201CPeople who believe in Me without seeing Me are blessed.\u201D That\u2019s us! We believe in Jesus even though we can\u2019t see Him, and that makes our faith extra special.",
+    questions: ["We can\u2019t see Jesus with our eyes, but how do we know He\u2019s real?", "What helps you believe in Jesus even though you can\u2019t see Him?"],
+    prayer: "Dear Jesus, even though we can\u2019t see You, we believe in You with all our hearts. Bless our faith and help it grow stronger every day. Amen."
+  },
+  {
+    ref: "Matthew 13:45\u201346",
+    text: "Again, the kingdom of heaven is like a merchant looking for fine pearls. When he found one of great value, he went away and sold everything he had and bought it.",
+    explain: "Jesus told a story about a man who found the most beautiful pearl in the whole world. It was so amazing that he sold everything he had just to get it! Jesus says that\u2019s what God\u2019s kingdom is like \u2014 it\u2019s the most valuable, wonderful treasure there is, worth more than anything else.",
+    questions: ["What is your most treasured possession?", "Why do you think Jesus is more valuable than anything we can own?"],
+    prayer: "Dear Jesus, help us treasure You and Your kingdom above everything else. You are the most precious gift of all. Amen."
+  },
+  {
+    ref: "Luke 23:34",
+    text: "Jesus said, \u201CFather, forgive them, for they do not know what they are doing.\u201D",
+    explain: "Even when Jesus was on the cross, hurting so much, He prayed for the people who hurt Him. He asked God to forgive them! That is the biggest, most amazing love there is. Jesus forgave even when it was the hardest thing to do.",
+    questions: ["Why is it sometimes hard to forgive someone?", "How can Jesus\u2019s example on the cross help us when we need to forgive?"],
+    prayer: "Dear Jesus, Your forgiveness is the most amazing love in the world. Help us forgive others, even when it\u2019s hard, because You forgave us first. Amen."
+  },
+  {
+    ref: "Matthew 6:21",
+    text: "For where your treasure is, there your heart will be also.",
+    explain: "Jesus tells us that whatever we love the most \u2014 that\u2019s where our heart lives. If we love toys and games more than anything, our heart is stuck there. But if we love God and people, our hearts are in the best place! Jesus wants us to store up treasures in heaven by being kind, loving, and good.",
+    questions: ["What is the most important thing to you?", "How can we put our hearts on things that matter most to God?"],
+    prayer: "Dear Jesus, help us treasure the things that matter most \u2014 loving God and loving others. Let our hearts be where You are. Amen."
+  },
+  {
+    ref: "Mark 5:41\u201342",
+    text: "He took her by the hand and said to her, \u201CTalitha koum!\u201D (which means \u201CLittle girl, I say to you, get up!\u201D). Immediately the girl stood up and began to walk around.",
+    explain: "A little girl had died and everyone was crying. But Jesus went to her, held her hand gently, and said, \u201CLittle girl, get up!\u201D And she opened her eyes, stood up, and was completely alive again! Jesus is so powerful that He even has power over death. And He did it all while holding her hand gently.",
+    questions: ["Jesus called her \u201Clittle girl\u201D so kindly. What does that tell you about Jesus?", "How does it feel to know that nothing is too big or too hard for Jesus?"],
+    prayer: "Dear Jesus, You are so powerful and so gentle at the same time. When things feel hopeless, remind us that You can make all things new. Amen."
+  },
+  {
+    ref: "Luke 6:38",
+    text: "Give, and it will be given to you. A good measure, pressed down, shaken together and running over, will be poured into your lap.",
+    explain: "Jesus says that when we give \u2014 our time, our toys, our love, our help \u2014 God gives back to us even MORE! It\u2019s like when you pour cereal into a bowl and shake it down so you can fit more and more until it\u2019s overflowing. That\u2019s how generous God is with people who are generous.",
+    questions: ["What is something you can give to someone today?", "Has someone ever been really generous to you? How did it make you feel?"],
+    prayer: "Dear Jesus, make us generous givers! Help us share freely, knowing that You will always take care of us and fill us up with even more. Amen."
+  },
+  {
+    ref: "John 10:27\u201328",
+    text: "My sheep listen to my voice; I know them, and they follow me. I give them eternal life, and they shall never perish; no one will snatch them out of my hand.",
+    explain: "Jesus says we are like His sheep, and He is our Shepherd. He knows us, He calls us by name, and when we follow His voice, no one can ever take us away from Him. We are safe in His hands forever. Nothing can separate us from Jesus\u2019s love.",
+    questions: ["How do you listen for Jesus\u2019s voice?", "How does it make you feel to know no one can snatch you from Jesus\u2019s hands?"],
+    prayer: "Dear Jesus, thank You for holding us safely in Your hands. Help us listen for Your voice and follow wherever You lead. Amen."
+  },
+  {
+    ref: "Matthew 2:10\u201311",
+    text: "When they saw the star, they were overjoyed. On coming to the house, they saw the child with his mother Mary, and they bowed down and worshiped him. Then they opened their treasures and presented him with gifts of gold, frankincense and myrrh.",
+    explain: "The Wise Men traveled a really, really long way \u2014 following a star \u2014 just to find baby Jesus. When they finally found Him, they were so happy! They knelt down, worshiped Him, and gave Him their best gifts. Even as a baby, people knew Jesus was a King worth worshiping.",
+    questions: ["If you could bring a gift to baby Jesus, what would you bring?", "What is the best gift you can give Jesus right now?"],
+    prayer: "Dear Jesus, like the Wise Men, we want to give You our very best. Help us worship You and offer You our hearts every day. Amen."
+  },
+  {
+    ref: "Luke 9:16\u201317",
+    text: "Taking the five loaves and the two fish and looking up to heaven, he gave thanks and broke them. Then he gave them to the disciples to distribute to the people. They all ate and were satisfied.",
+    explain: "Thousands of people were hungry and all they had was a little boy\u2019s lunch. But Jesus gave thanks to God, broke the bread, and it just kept coming and coming! Everyone ate until they were full. Jesus shows us that when we give what we have to God and say thank you, He can multiply it beyond what we imagine.",
+    questions: ["What do you have that you can offer to God?", "Why did Jesus say thank you before the miracle happened?"],
+    prayer: "Dear Jesus, we give You everything we have, even when it seems like a little. We trust that You can turn it into something wonderful. Thank You! Amen."
+  },
+  {
+    ref: "Matthew 5:6",
+    text: "Blessed are those who hunger and thirst for righteousness, for they will be filled.",
+    explain: "You know that feeling when you\u2019re really, really hungry and all you can think about is food? Jesus says we should want to do what\u2019s right that much! People who really, truly want to be good and do the right thing \u2014 God will fill them up with goodness.",
+    questions: ["What does it mean to do the right thing, even when it\u2019s hard?", "How can we \u2018hunger\u2019 for goodness every day?"],
+    prayer: "Dear Jesus, give us a deep hunger to do what is right. Fill us with Your goodness so we can share it with the world. Amen."
+  },
+  {
+    ref: "Mark 10:51\u201352",
+    text: "\u201CWhat do you want me to do for you?\u201D Jesus asked him. The blind man said, \u201CRabbi, I want to see.\u201D \u201CGo,\u201D said Jesus, \u201Cyour faith has healed you.\u201D Immediately he received his sight and followed Jesus along the road.",
+    explain: "A blind man named Bartimaeus kept calling out to Jesus, even when people told him to be quiet. Jesus stopped and asked him a beautiful question: \u201CWhat do you want me to do for you?\u201D Bartimaeus said, \u201CI want to see.\u201D And Jesus healed his eyes right away! Jesus always stops for us and asks what we need.",
+    questions: ["If Jesus asked you, \u2018What do you want me to do for you?\u2019 \u2014 what would you say?", "Why did Bartimaeus keep calling out even when people told him to stop?"],
+    prayer: "Dear Jesus, thank You for always stopping to listen to us. Help us be brave enough to ask You for what we need. Amen."
+  },
+  {
+    ref: "John 3:16",
+    text: "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
+    explain: "This might be the most famous verse in the whole Bible! It tells us that God loved the whole world \u2014 every person \u2014 so incredibly much that He sent Jesus, His own Son, so that anyone who believes in Him can live forever with God. That\u2019s how big God\u2019s love is!",
+    questions: ["How big do you think God\u2019s love is?", "What does it mean to live forever with God?"],
+    prayer: "Dear God, Your love is so big that You gave us Jesus. Thank You for loving the whole world, and thank You for loving our family. Help us share this love with everyone. Amen."
+  },
+  {
+    ref: "Luke 5:4\u20136",
+    text: "When he had finished speaking, he said to Simon, \u201CPut out into deep water, and let down the nets for a catch.\u201D Simon answered, \u201CMaster, we\u2019ve worked hard all night and haven\u2019t caught anything. But because you say so, I will let down the nets.\u201D When they had done so, they caught such a large number of fish that their nets began to break.",
+    explain: "Simon Peter had been fishing all night with zero luck. He was tired and wanted to go home. But when Jesus said, \u201CTry again in deep water,\u201D Peter trusted Him, even though it didn\u2019t make sense. And they caught so many fish the nets almost broke! Sometimes Jesus asks us to try again when we\u2019re ready to give up.",
+    questions: ["Have you ever wanted to give up on something? What happened?", "Why is it important to keep trying when Jesus asks us to?"],
+    prayer: "Dear Jesus, even when we feel tired or like giving up, help us trust You and try again. You always have something amazing planned. Amen."
+  },
+  {
+    ref: "Matthew 18:3",
+    text: "Truly I tell you, unless you change and become like little children, you will never enter the kingdom of heaven.",
+    explain: "Jesus\u2019s friends asked Him who is the greatest in heaven. And Jesus surprised everyone \u2014 He pointed to a child and said grown-ups need to become more like kids! Children trust easily, love freely, and aren\u2019t worried about being the most important. That\u2019s exactly the kind of heart Jesus loves.",
+    questions: ["What makes kids special?", "How can our whole family be more childlike in our faith?"],
+    prayer: "Dear Jesus, thank You for telling us that kids are so important to You. Help all of us \u2014 big and small \u2014 to have simple, trusting, childlike hearts. Amen."
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════
+// SPANISH PASSAGES (Mexican Spanish, Biblia Latinoamericana style)
+// ═══════════════════════════════════════════════════════════════
+var passages_es = [
+  {
+    ref: "Mateo 19:14",
+    text: "Jes\u00fas dijo: \u201CDejen que los ni\u00f1os vengan a m\u00ed y no se lo impidan, porque el Reino de los cielos es de los que son como ellos.\u201D",
+    explain: "Unos adultos intentaron alejar a los ni\u00f1os de Jes\u00fas, pero \u00c9l dijo que no \u2014 \u00a1quer\u00eda que los ni\u00f1os se acercaran! Jes\u00fas ama much\u00edsimo a los ni\u00f1os. Dice que los ni\u00f1os tienen corazones especiales que son muy buenos para amar a Dios.",
+    questions: ["\u00bfPor qu\u00e9 crees que Jes\u00fas quer\u00eda que los ni\u00f1os vinieran a \u00c9l?", "\u00bfQu\u00e9 le dir\u00edas a Jes\u00fas si pudieras sentarte en Su regazo ahorita?"],
+    prayer: "Querido Jes\u00fas, gracias por amarnos tanto, especialmente a los ni\u00f1os. Ay\u00fadanos a siempre correr hacia Ti con el coraz\u00f3n alegre. Am\u00e9n."
+  },
+  {
+    ref: "Marcos 4:39",
+    text: "Se levant\u00f3, reprendi\u00f3 al viento y dijo al mar: \u201C\u00a1C\u00e1llate! \u00a1Qu\u00e9date quieto!\u201D El viento ces\u00f3 y se hizo una gran calma.",
+    explain: "Jes\u00fas y Sus amigos estaban en una barca cuando lleg\u00f3 una tormenta enorme y aterradora. \u00a1Las olas chocaban y todos ten\u00edan miedo! Pero Jes\u00fas simplemente se puso de pie y le dijo a la tormenta que parara \u2014 \u00a1y par\u00f3 al instante! Jes\u00fas es tan poderoso que hasta el viento y las olas le obedecen.",
+    questions: ["\u00bfAlguna vez te has asustado durante una tormenta? \u00bfQu\u00e9 hiciste?", "\u00bfC\u00f3mo te hace sentir saber que Jes\u00fas puede calmar cualquier tormenta?"],
+    prayer: "Querido Jes\u00fas, cuando tengamos miedo, ay\u00fadanos a recordar que T\u00fa eres m\u00e1s grande y m\u00e1s fuerte que cualquier tormenta. Danos paz en nuestros corazones. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 14:19\u201320",
+    text: "Tom\u00f3 los cinco panes y los dos pescados, levant\u00f3 los ojos al cielo, dio gracias, parti\u00f3 los panes y se los dio a los disc\u00edpulos. Todos comieron hasta quedar satisfechos, y recogieron doce canastos llenos de sobras.",
+    explain: "\u00a1Hab\u00eda un mont\u00f3n de gente con hambre y solo ten\u00edan el almuerzo de un ni\u00f1o: cinco panes y dos pescados! Pero Jes\u00fas le dio gracias a Dios, parti\u00f3 el pan, \u00a1y se sigui\u00f3 multiplicando! M\u00e1s de 5,000 personas comieron hasta llenarse, y a\u00fan sobraron canastos. Jes\u00fas puede hacer cosas incre\u00edbles con los regalos m\u00e1s peque\u00f1os.",
+    questions: ["\u00bfC\u00f3mo te sentir\u00edas si tuvieras que compartir tu almuerzo con todos?", "\u00bfQu\u00e9 cosa peque\u00f1a puedes compartir con otros hoy?"],
+    prayer: "Querido Jes\u00fas, gracias por siempre darnos lo que necesitamos. Ay\u00fadanos a ser generosos y compartir lo que tenemos, aunque parezca poquito. Am\u00e9n."
+  },
+  {
+    ref: "Marcos 4:30\u201332",
+    text: "Dijo: \u201C\u00bfA qu\u00e9 se parece el Reino de Dios? Es como un grano de mostaza, que es la m\u00e1s peque\u00f1a de todas las semillas de la tierra. Pero una vez sembrada, crece y se hace la m\u00e1s grande de todas las plantas del huerto.\u201D",
+    explain: "Jes\u00fas cont\u00f3 una historia sobre una semilla chiquitita \u2014 de las m\u00e1s peque\u00f1as que te puedas imaginar. Pero cuando la siembras y la cuidas, \u00a1crece hasta ser una planta enorme! Jes\u00fas nos est\u00e1 diciendo que hasta los peque\u00f1os actos de amor y bondad pueden crecer hasta ser algo muy, muy grande.",
+    questions: ["\u00bfCu\u00e1l es la cosa buena m\u00e1s peque\u00f1a que hiciste hoy? \u00bfC\u00f3mo podr\u00eda crecer?", "\u00bfPuedes pensar en una vez que algo peque\u00f1o se convirti\u00f3 en algo grande?"],
+    prayer: "Querido Jes\u00fas, ay\u00fadanos a hacer peque\u00f1os actos de amor cada d\u00eda, sabiendo que T\u00fa puedes hacerlos crecer hasta ser algo hermoso. Am\u00e9n."
+  },
+  {
+    ref: "Juan 10:14",
+    text: "Yo soy el buen pastor; conozco a mis ovejas y mis ovejas me conocen a m\u00ed.",
+    explain: "Jes\u00fas dice que \u00c9l es como un pastor \u2014 alguien que cuida a las ovejas. Un buen pastor conoce a cada una de sus ovejas por su nombre. Las mantiene seguras, les da de comer y nunca las deja solas. \u00a1Jes\u00fas nos conoce a cada uno por nuestro nombre y nos cuida as\u00ed!",
+    questions: ["\u00bfC\u00f3mo se siente saber que Jes\u00fas conoce tu nombre?", "\u00bfC\u00f3mo cuida Jes\u00fas de ti y de nuestra familia?"],
+    prayer: "Querido Jes\u00fas, nuestro Buen Pastor, gracias por conocernos y amarnos. Ay\u00fadanos a escuchar Tu voz y seguirte siempre. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 15:4\u20136",
+    text: "\u00bfQui\u00e9n de ustedes, si tiene cien ovejas y pierde una, no deja las noventa y nueve para ir a buscar la que se perdi\u00f3 hasta encontrarla? Y cuando la encuentra, se la pone sobre los hombros lleno de alegr\u00eda y vuelve a su casa.",
+    explain: "Jes\u00fas cont\u00f3 la historia de un pastor que ten\u00eda 100 ovejas. Cuando una sola se perdi\u00f3, \u00a1dej\u00f3 a todas las dem\u00e1s para ir a buscarla! Y cuando la encontr\u00f3, estaba tan contento que la carg\u00f3 sobre sus hombros hasta la casa. As\u00ed de mucho nos ama Jes\u00fas \u2014 siempre vendr\u00e1 a buscarnos.",
+    questions: ["\u00bfAlguna vez perdiste algo especial y luego lo encontraste? \u00bfC\u00f3mo te sentiste?", "\u00bfC\u00f3mo te hace sentir saber que Jes\u00fas vendr\u00eda a buscarte?"],
+    prayer: "Querido Jes\u00fas, gracias por nunca darte por vencido con nosotros. Aunque nos alejemos, siempre vienes a encontrarnos y llevarnos a casa. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 7:24\u201325",
+    text: "Todo el que escucha estas palabras m\u00edas y las pone en pr\u00e1ctica es como un hombre prudente que construy\u00f3 su casa sobre roca. Cay\u00f3 la lluvia, crecieron los r\u00edos, soplaron los vientos y golpearon la casa; pero no se derrumb\u00f3 porque estaba cimentada sobre roca.",
+    explain: "Jes\u00fas cont\u00f3 una historia sobre dos constructores. El sabio construy\u00f3 su casa sobre roca firme, \u00a1y cuando lleg\u00f3 una gran tormenta, la casa se mantuvo en pie! El tonto construy\u00f3 sobre arena, y su casa se cay\u00f3 \u2014 \u00a1pum! Jes\u00fas nos dice que cuando lo escuchamos y hacemos lo que dice, somos como el constructor sabio. Sus palabras nos hacen fuertes.",
+    questions: ["\u00bfQu\u00e9 es m\u00e1s fuerte: un castillo de arena o una roca? \u00bfPor qu\u00e9?", "\u00bfQu\u00e9 cosa que Jes\u00fas nos ense\u00f1a hace fuerte a nuestra familia?"],
+    prayer: "Querido Jes\u00fas, ay\u00fadanos a construir nuestras vidas sobre Ti, nuestra roca firme. Cuando vengan tiempos dif\u00edciles, mant\u00e9n a nuestra familia firme y unida. Am\u00e9n."
+  },
+  {
+    ref: "Juan 8:12",
+    text: "Jes\u00fas les habl\u00f3 diciendo: \u201CYo soy la luz del mundo. El que me sigue no caminar\u00e1 en tinieblas, sino que tendr\u00e1 la luz de la vida.\u201D",
+    explain: "Imag\u00ednate estar en un cuarto oscuro \u2014 no puedes ver nada y da un poco de miedo. \u00a1Pero luego alguien prende una luz brillante y de repente puedes ver todo! Jes\u00fas dice que \u00c9l es como esa luz. Cuando lo seguimos, nunca tenemos que tener miedo de la oscuridad porque \u00c9l ilumina nuestro camino.",
+    questions: ["\u00bfQu\u00e9 pasa cuando prendes una luz en un cuarto oscuro?", "\u00bfC\u00f3mo puede Jes\u00fas ser una luz para nosotros cuando nos sentimos perdidos o confundidos?"],
+    prayer: "Querido Jes\u00fas, \u00a1T\u00fa eres nuestra luz! Cuando las cosas se sientan oscuras o den miedo, ay\u00fadanos a recordar que siempre est\u00e1s brillando para nosotros. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 5:14\u201316",
+    text: "Ustedes son la luz del mundo. Una ciudad edificada sobre un monte no se puede esconder. Ni se enciende una l\u00e1mpara para meterla debajo de un caj\u00f3n, sino que se pone sobre el candelero para que alumbre a todos los que est\u00e1n en la casa.",
+    explain: "\u00a1Jes\u00fas les dijo a Sus amigos que ellos tambi\u00e9n son luces! Dijo que ser\u00eda tonto prender una l\u00e1mpara y luego taparla con un caj\u00f3n \u2014 perder\u00edas toda la luz. En vez de eso, la pones en alto para que todos puedan ver. Jes\u00fas quiere que seamos luces brillantes siendo amables, cari\u00f1osos y buenos para que todos vean el amor de Dios.",
+    questions: ["\u00bfDe qu\u00e9 maneras puedes ser una luz para otros hoy?", "\u00bfQui\u00e9n en nuestra familia es una luz muy buena para los dem\u00e1s?"],
+    prayer: "Querido Jes\u00fas, ay\u00fadanos a hacer brillar nuestras luces hoy. Que la gente vea Tu amor en todo lo que hacemos y decimos. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 6:26",
+    text: "Miren las aves del cielo: no siembran, ni cosechan, ni guardan en graneros, y sin embargo el Padre celestial las alimenta. \u00bfNo valen ustedes mucho m\u00e1s que ellas?",
+    explain: "Jes\u00fas se\u00f1al\u00f3 a los p\u00e1jaros volando en el cielo y dijo: \u201C\u00bfVen esos p\u00e1jaros? No tienen cocina ni tienda, pero Dios se asegura de que siempre tengan comida.\u201D Luego dijo: \u201C\u00a1Y ustedes valen mucho m\u00e1s para Dios que los p\u00e1jaros!\u201D Dios siempre nos cuida porque nos ama.",
+    questions: ["La pr\u00f3xima vez que veas un p\u00e1jaro, \u00bfqu\u00e9 vas a recordar?", "\u00bfPuedes pensar en una vez que Dios cuid\u00f3 algo que nuestra familia necesitaba?"],
+    prayer: "Querido Dios, gracias por cuidar a los p\u00e1jaros, las flores y especialmente a nosotros. Ay\u00fadanos a confiar en que siempre nos dar\u00e1s lo que necesitamos. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 10:30\u201334",
+    text: "Un hombre bajaba de Jerusal\u00e9n a Jeric\u00f3 y cay\u00f3 en manos de unos asaltantes. Un samaritano que iba de viaje lleg\u00f3 adonde estaba el hombre; lo vio y se compadeci\u00f3 de \u00e9l. Le vend\u00f3 las heridas, lo subi\u00f3 a su propia cabalgadura, lo llev\u00f3 a una posada y lo cuid\u00f3.",
+    explain: "Jes\u00fas cont\u00f3 una historia sobre un hombre que fue lastimado en el camino. \u00a1Dos personas importantes pasaron de largo sin ayudarlo! Pero un desconocido \u2014 alguien que la mayor\u00eda no esperar\u00eda que ayudara \u2014 se detuvo, le vend\u00f3 las heridas y lo cuid\u00f3. Jes\u00fas nos ense\u00f1a que ser amables con todos, incluso con desconocidos, es muy importante.",
+    questions: ["\u00bfC\u00f3mo te sentir\u00edas si estuvieras lastimado y nadie se detuviera a ayudarte?", "\u00bfCon qui\u00e9n puedes ser extra amable hoy?"],
+    prayer: "Querido Jes\u00fas, danos ojos para ver a las personas que necesitan ayuda y corazones valientes para detenernos y cuidarlos, como el Buen Samaritano. Am\u00e9n."
+  },
+  {
+    ref: "Juan 6:35",
+    text: "Jes\u00fas les dijo: \u201CYo soy el pan de vida. El que viene a m\u00ed no tendr\u00e1 hambre, y el que cree en m\u00ed no tendr\u00e1 sed jam\u00e1s.\u201D",
+    explain: "Cuando te ruge la pancita, necesitas comida, \u00bfverdad? Jes\u00fas dice que \u00c9l es como pan para nuestros corazones y nuestras almas. As\u00ed como nuestros cuerpos necesitan comida para ser fuertes, nuestros corazones necesitan a Jes\u00fas para ser felices y estar llenos. Cuando rezamos y pasamos tiempo con Jes\u00fas, \u00c9l nos llena de amor y alegr\u00eda.",
+    questions: ["\u00bfCu\u00e1l es tu comida favorita que te llena la pancita?", "\u00bfC\u00f3mo crees que Jes\u00fas llena nuestros corazones?"],
+    prayer: "Querido Jes\u00fas, Pan de Vida, llena nuestros corazones con Tu amor hoy. Que nunca olvidemos que T\u00fa eres todo lo que necesitamos. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 19:1\u20136",
+    text: "Hab\u00eda un hombre llamado Zaqueo, jefe de los cobradores de impuestos y muy rico. Quer\u00eda ver qui\u00e9n era Jes\u00fas, pero como era de baja estatura no pod\u00eda ver por encima de la multitud. Corri\u00f3 adelante y se subi\u00f3 a un \u00e1rbol sic\u00f3moro. Cuando Jes\u00fas lleg\u00f3 al lugar, mir\u00f3 hacia arriba y le dijo: \u201CZaqueo, baja enseguida. Hoy tengo que hospedarme en tu casa.\u201D",
+    explain: "Zaqueo era un hombrecito al que nadie quer\u00eda porque les quitaba el dinero injustamente. \u00a1Pero \u00e9l quer\u00eda mucho ver a Jes\u00fas! As\u00ed que se subi\u00f3 a un \u00e1rbol grande. Cuando Jes\u00fas pas\u00f3, mir\u00f3 hacia arriba y le dijo: \u201C\u00a1Baja! \u00a1Hoy voy a tu casa!\u201D Jes\u00fas eligi\u00f3 ser amigo de alguien que todos los dem\u00e1s ignoraban. Despu\u00e9s de eso, Zaqueo cambi\u00f3 y se volvi\u00f3 amable y generoso.",
+    questions: ["\u00bfAlguna vez te has sentido muy chiquito para ver algo? \u00bfQu\u00e9 hiciste?", "Jes\u00fas era amigo de todos, incluso de los que otros no quer\u00edan. \u00bfC\u00f3mo podemos ser as\u00ed?"],
+    prayer: "Querido Jes\u00fas, gracias por vernos y amarnos sin importar qu\u00e9. Ay\u00fadanos a recibir bien a todos, igual que T\u00fa recibiste a Zaqueo. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 18:20",
+    text: "Porque donde est\u00e1n dos o tres reunidos en mi nombre, all\u00ed estoy yo en medio de ellos.",
+    explain: "\u00a1Jes\u00fas hizo una promesa incre\u00edble: cada vez que aunque sea pocas personas se re\u00fanan para rezar o hablar de \u00c9l, \u00c9l est\u00e1 ah\u00ed con ellos! Entonces cuando nuestra familia reza junta, Jes\u00fas est\u00e1 sentado aqu\u00ed mismo con nosotros, escuch\u00e1ndonos y am\u00e1ndonos. No lo podemos ver, pero est\u00e1 aqu\u00ed.",
+    questions: ["\u00bfVerdad que es padr\u00edsimo que Jes\u00fas est\u00e9 aqu\u00ed con nosotros ahorita? \u00bfQu\u00e9 te gustar\u00eda decirle?", "\u00bfD\u00f3nde m\u00e1s podr\u00edamos invitar a Jes\u00fas a estar con nosotros hoy?"],
+    prayer: "Querido Jes\u00fas, gracias por estar aqu\u00ed con nuestra familia. Te amamos y estamos muy contentos de que nunca nos dejas. Am\u00e9n."
+  },
+  {
+    ref: "Juan 15:12",
+    text: "Este es mi mandamiento: que se amen unos a otros como yo los he amado.",
+    explain: "Jes\u00fas nos dio la regla m\u00e1s importante de todas: \u00a1\u00e1mense unos a otros! Y no poquito, sino \u00e1mense de la misma manera grande y enorme en que \u00c9l nos ama. Eso significa ser pacientes, ser amables, perdonarse y ayudarse todos los d\u00edas.",
+    questions: ["\u00bfC\u00f3mo nos ama Jes\u00fas? \u00bfPuedes pensar en ejemplos?", "\u00bfCu\u00e1l es una manera en que puedes amar extra bien a alguien de nuestra familia hoy?"],
+    prayer: "Querido Jes\u00fas, Tu amor es tan grande y tan fuerte. Ay\u00fadanos a amarnos unos a otros como T\u00fa nos amas \u2014 con paciencia, bondad y perd\u00f3n. Am\u00e9n."
+  },
+  {
+    ref: "Marcos 10:16",
+    text: "Y tom\u00e1ndolos en sus brazos, los bendec\u00eda poniendo las manos sobre ellos.",
+    explain: "Cuando los ni\u00f1os vinieron a ver a Jes\u00fas, \u00c9l no solo salud\u00f3 de lejos. \u00a1Los levant\u00f3, los abraz\u00f3 y los bendijo! Eso significa que rez\u00f3 cosas buenas por cada ni\u00f1o. A Jes\u00fas le encanta tener a los ni\u00f1os cerca de Su coraz\u00f3n.",
+    questions: ["\u00bfC\u00f3mo se siente cuando alguien te da un abrazote?", "\u00bfQu\u00e9 bendici\u00f3n le pedir\u00edas a Jes\u00fas hoy?"],
+    prayer: "Querido Jes\u00fas, sabemos que nos sostienes cerca en Tus brazos. Bendice a nuestra familia hoy y ll\u00e9nanos de Tu amor y Tu paz. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 11:9\u201310",
+    text: "As\u00ed que yo les digo: Pidan y se les dar\u00e1; busquen y encontrar\u00e1n; llamen y se les abrir\u00e1. Porque todo el que pide, recibe; el que busca, encuentra; y al que llama, se le abre.",
+    explain: "\u00a1Jes\u00fas nos dice que le hablemos a Dios! Dice que es como tocar una puerta \u2014 cuando tocas, la puerta se abre. Cuando le pedimos ayuda a Dios, \u00c9l escucha. Cuando lo buscamos, lo encontramos. Dios siempre responde cuando lo llamamos.",
+    questions: ["\u00bfQu\u00e9 te gustar\u00eda pedirle a Dios hoy?", "\u00bfAlguna vez rezaste por algo y luego pas\u00f3?"],
+    prayer: "Querido Dios, gracias por siempre escucharnos cuando Te hablamos. Ay\u00fadanos a recordar pedir, buscar y tocar \u2014 porque T\u00fa siempre respondes. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 5:9",
+    text: "Bienaventurados los que trabajan por la paz, porque ser\u00e1n llamados hijos de Dios.",
+    explain: "Jes\u00fas dice que las personas que hacen la paz son s\u00faper especiales \u2014 \u00a1Dios los llama Sus propios hijos! Ser pacificador significa ayudar a que la gente se lleve bien, no pelear, pedir perd\u00f3n y ser amable cuando otros est\u00e1n molestos. Cuando hacemos la paz, actuamos igual que Dios.",
+    questions: ["\u00bfQu\u00e9 significa hacer la paz? \u00bfPuedes dar un ejemplo?", "\u00bfC\u00f3mo puedes ser un pacificador en casa o con tus amigos?"],
+    prayer: "Querido Jes\u00fas, Pr\u00edncipe de la Paz, ay\u00fadanos a ser pacificadores hoy. Cuando haya peleas o tristeza, ay\u00fadanos a traer amor y bondad. Am\u00e9n."
+  },
+  {
+    ref: "Juan 14:27",
+    text: "La paz les dejo, mi paz les doy. No se la doy como la da el mundo. No se angustien ni tengan miedo.",
+    explain: "Antes de que Jes\u00fas dejara a Sus amigos, les dio un regalo muy especial \u2014 Su paz. No la clase de paz que obtienes de un juguete o un dulce, sino una paz profunda y fuerte que se queda en tu coraz\u00f3n aunque las cosas est\u00e9n dif\u00edciles. Jes\u00fas dice: \u201CNo tengan miedo. Les estoy dando Mi paz.\u201D",
+    questions: ["\u00bfQu\u00e9 te hace sentir en paz y seguro?", "Cuando te sientes preocupado, \u00bfc\u00f3mo puedes pedirle a Jes\u00fas Su paz?"],
+    prayer: "Querido Jes\u00fas, gracias por Tu regalo de paz. Cuando nuestros corazones se sientan angustiados o con miedo, ll\u00e9nanos de la calma que solo T\u00fa puedes dar. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 17:20",
+    text: "Les aseguro que si tienen fe del tama\u00f1o de un grano de mostaza, le dir\u00e1n a este cerro: \u2018Qu\u00edtate de ah\u00ed y ponte m\u00e1s all\u00e1\u2019, y el cerro obedecer\u00e1. Nada les ser\u00e1 imposible.",
+    explain: "Un grano de mostaza es de las semillitas m\u00e1s chiquitas que hay \u2014 \u00a1apenas la puedes ver! Pero Jes\u00fas dice que hasta un poquito de fe as\u00ed de chiquita puede hacer cosas incre\u00edbles. \u00a1Con Dios, nada es imposible! No necesitas una fe enorme \u2014 hasta una fe peque\u00f1a, cuando conf\u00edas en Dios con todo tu coraz\u00f3n, puede mover monta\u00f1as.",
+    questions: ["\u00bfQu\u00e9 es algo que parece muy dif\u00edcil o imposible ahorita?", "\u00bfC\u00f3mo podemos confiar en Dios, aunque nuestra fe se sienta peque\u00f1a?"],
+    prayer: "Querido Jes\u00fas, aunque nuestra fe se sienta chiquita, sabemos que T\u00fa puedes hacer cosas incre\u00edbles. Ay\u00fadanos a confiar en Ti con todo el coraz\u00f3n. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 2:11\u201312",
+    text: "Hoy les ha nacido en la ciudad de David un Salvador, que es el Mes\u00edas, el Se\u00f1or. Esto les servir\u00e1 de se\u00f1al: encontrar\u00e1n a un ni\u00f1o envuelto en pa\u00f1ales y acostado en un pesebre.",
+    explain: "En la primera Navidad, unos \u00e1ngeles se les aparecieron a los pastores en el campo por la noche y les dijeron la noticia m\u00e1s emocionante de todas: \u00a1un beb\u00e9 especial \u2014 Jes\u00fas, el Salvador \u2014 acababa de nacer! Y lo encontrar\u00edan no en un palacio, sino en un pesebre, donde comen los animales. Dios vino a nosotros como un beb\u00e9 chiquito. \u00a1Incre\u00edble!",
+    questions: ["\u00bfPor qu\u00e9 crees que Dios eligi\u00f3 venir como un beb\u00e9 en vez de como un rey en un trono?", "\u00bfCu\u00e1l es tu parte favorita de la historia de Navidad?"],
+    prayer: "Querido Jes\u00fas, gracias por venir a la tierra como un beb\u00e9 para estar cerca de nosotros. Ay\u00fadanos a siempre recordar el verdadero significado de la Navidad. Am\u00e9n."
+  },
+  {
+    ref: "Juan 13:34",
+    text: "Les doy un mandamiento nuevo: que se amen unos a otros. As\u00ed como yo los he amado, \u00e1mense tambi\u00e9n unos a otros.",
+    explain: "Jes\u00fas nos dio una regla nueva que tambi\u00e9n es la m\u00e1s importante: \u00a1\u00e1mense unos a otros! Y no solo un poquito \u2014 \u00e1mense de la misma manera en que Jes\u00fas nos ama. Ese es un amor muy grande: paciente, amable, que perdona y siempre est\u00e1 ah\u00ed. As\u00ed es como la gente sabe que somos de Jes\u00fas.",
+    questions: ["\u00bfC\u00f3mo sabe la gente que los amamos? \u00bfC\u00f3mo se ve el amor?", "\u00bfCu\u00e1l es una cosa amorosa que puedes hacer por alguien hoy?"],
+    prayer: "Querido Jes\u00fas, llena nuestros corazones con tanto amor que se desborde a todos los que nos rodean. Ay\u00fadanos a amar como T\u00fa amas. Am\u00e9n."
+  },
+  {
+    ref: "Marcos 2:5",
+    text: "Al ver Jes\u00fas la fe de ellos, le dijo al paral\u00edtico: \u201CHijo, tus pecados quedan perdonados.\u201D",
+    explain: "Un hombre que no pod\u00eda caminar ten\u00eda cuatro amigos incre\u00edbles. Quer\u00edan tanto llevarlo a Jes\u00fas que cuando no pudieron pasar entre la multitud, \u00a1se subieron al techo, hicieron un hoyo y bajaron a su amigo justo frente a Jes\u00fas! Cuando Jes\u00fas vio cu\u00e1nto cre\u00edan, san\u00f3 al hombre. Los buenos amigos se ayudan unos a otros a acercarse a Jes\u00fas.",
+    questions: ["\u00bfQu\u00e9 har\u00edas para ayudar a un amigo que necesitara a Jes\u00fas?", "\u00bfQui\u00e9nes son los amigos que te ayudan a estar m\u00e1s cerca de Dios?"],
+    prayer: "Querido Jes\u00fas, gracias por nuestros amigos. Ay\u00fadanos a ser el tipo de amigos que se cargan unos a otros para acercarse m\u00e1s a Ti. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 28:20",
+    text: "Y sepan que yo estoy con ustedes todos los d\u00edas hasta el fin del mundo.",
+    explain: "Estas fueron de las \u00faltimas palabras de Jes\u00fas a Sus amigos antes de subir al cielo. Prometi\u00f3: \u201CEstoy con ustedes siempre.\u201D No solo a veces, no solo en los d\u00edas buenos \u2014 \u00a1siempre! Cada momento, Jes\u00fas est\u00e1 ah\u00ed con nosotros.",
+    questions: ["\u00bfCu\u00e1ndo necesitas recordar m\u00e1s que Jes\u00fas est\u00e1 contigo?", "\u00bfHay alg\u00fan lugar donde te cuesta recordar que Jes\u00fas est\u00e1 ah\u00ed?"],
+    prayer: "Querido Jes\u00fas, gracias por Tu promesa de estar con nosotros siempre. Ay\u00fadanos a sentirte cerca, hoy y todos los d\u00edas, sin importar a d\u00f3nde vayamos. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 6:31",
+    text: "Traten a los dem\u00e1s como quieren que ellos los traten a ustedes.",
+    explain: "Esta se llama la Regla de Oro, y es una de las cosas m\u00e1s importantes que Jes\u00fas ense\u00f1\u00f3. Significa: \u00a1trata a la gente como quieres que te traten a ti! Si quieres que la gente sea amable contigo, s\u00e9 amable con ellos. Si quieres que compartan contigo, comparte con ellos. \u00a1As\u00ed de sencillo!",
+    questions: ["\u00bfC\u00f3mo quieres que los dem\u00e1s te traten?", "\u00bfHay alguien a quien puedas tratar extra bien hoy?"],
+    prayer: "Querido Jes\u00fas, ay\u00fadanos a tratar a todos como queremos que nos traten a nosotros \u2014 con amabilidad, respeto y amor. Am\u00e9n."
+  },
+  {
+    ref: "Juan 11:35",
+    text: "Jes\u00fas llor\u00f3.",
+    explain: "Este es el vers\u00edculo m\u00e1s corto de toda la Biblia, pero nos ense\u00f1a algo enorme: Jes\u00fas tambi\u00e9n llora. Cuando Su amigo L\u00e1zaro muri\u00f3, Jes\u00fas estaba tan triste que llor\u00f3. Esto nos dice que est\u00e1 bien sentirse triste y llorar. Jes\u00fas entiende nuestros sentimientos porque \u00c9l tiene sentimientos igual que nosotros.",
+    questions: ["\u00bfC\u00f3mo te hace sentir saber que hasta Jes\u00fas llor\u00f3 cuando estaba triste?", "\u00bfQu\u00e9 haces cuando te sientes triste? \u00bfCon qui\u00e9n hablas?"],
+    prayer: "Querido Jes\u00fas, gracias por entender c\u00f3mo nos sentimos. Cuando estemos tristes, por favor est\u00e1 cerca de nosotros y ay\u00fadanos a sentir Tu amor. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 15:8\u201310",
+    text: "\u00bfQu\u00e9 mujer que tiene diez monedas de plata, si pierde una, no enciende una l\u00e1mpara, barre la casa y busca con cuidado hasta encontrarla? Y cuando la encuentra, re\u00fane a sus amigas y vecinas y les dice: \u2018Al\u00e9grense conmigo, porque ya encontr\u00e9 la moneda que hab\u00eda perdido.\u2019",
+    explain: "Jes\u00fas cont\u00f3 la historia de una mujer que ten\u00eda diez monedas especiales y perdi\u00f3 una. Busc\u00f3 por todas partes \u2014 debajo de los tapetes, detr\u00e1s de los muebles, en cada rinc\u00f3n \u2014 \u00a1hasta que la encontr\u00f3! Y estaba TAN feliz que hizo una fiesta. Jes\u00fas dice que as\u00ed de feliz se pone Dios cuando alguien que estaba perdido regresa a \u00c9l. \u00a1As\u00ed de importante es cada persona para Dios!",
+    questions: ["\u00bfAlguna vez perdiste un juguete favorito y luego lo encontraste? \u00bfC\u00f3mo te sentiste?", "\u00bfC\u00f3mo te hace sentir saber que Dios buscar\u00eda por todos lados para encontrarte?"],
+    prayer: "Querido Dios, gracias por amar tanto a cada uno de nosotros que buscar\u00edas por todas partes para encontrarnos. \u00a1Somos muy valiosos para Ti! Am\u00e9n."
+  },
+  {
+    ref: "Mateo 6:9\u201313",
+    text: "Ustedes deben orar as\u00ed: \u2018Padre nuestro que est\u00e1s en el cielo, santificado sea tu nombre. Venga tu reino. H\u00e1gase tu voluntad en la tierra como en el cielo. Danos hoy nuestro pan de cada d\u00eda. Perd\u00f3nanos nuestras deudas, como tambi\u00e9n nosotros perdonamos a nuestros deudores. No nos dejes caer en tentaci\u00f3n, sino l\u00edbranos del mal.\u2019",
+    explain: "Cuando los amigos de Jes\u00fas preguntaron: \u201C\u00bfC\u00f3mo debemos rezar?\u201D, Jes\u00fas les ense\u00f1\u00f3 esta oraci\u00f3n \u2014 \u00a1el Padre Nuestro! Es la oraci\u00f3n m\u00e1s especial porque Jes\u00fas mismo nos la dio. Empieza alabando a Dios, luego pide lo que necesitamos, y termina pidi\u00e9ndole a Dios que nos proteja. Es la oraci\u00f3n perfecta.",
+    questions: ["\u00bfCu\u00e1l es tu parte favorita del Padre Nuestro?", "\u00bfQu\u00e9 agregar\u00edas si pudieras decirle una cosa m\u00e1s a Dios?"],
+    prayer: "Padre nuestro que est\u00e1s en el cielo, santificado sea Tu nombre. Venga Tu reino. H\u00e1gase Tu voluntad en la tierra como en el cielo. Danos hoy nuestro pan de cada d\u00eda. Perd\u00f3nanos nuestras ofensas, como tambi\u00e9n nosotros perdonamos a los que nos ofenden. No nos dejes caer en tentaci\u00f3n, y l\u00edbranos del mal. Am\u00e9n."
+  },
+  {
+    ref: "Marcos 6:50",
+    text: "Todos lo vieron y se asustaron. Pero \u00e9l les habl\u00f3 enseguida y les dijo: \u201C\u00a1\u00c1nimo! Soy yo. No tengan miedo.\u201D",
+    explain: "\u00a1Los amigos de Jes\u00fas estaban en su barca de noche cuando vieron a alguien caminando sobre el agua! \u00a1Estaban muy asustados! Pero era Jes\u00fas, y lo primero que dijo fue: \u201C\u00a1No tengan miedo! \u00a1Soy yo!\u201D Siempre que tenemos miedo, Jes\u00fas nos dice lo mismo: \u201C\u00a1\u00c1nimo! Estoy aqu\u00ed.\u201D",
+    questions: ["\u00bfQu\u00e9 cosas te dan miedo? \u00bfQu\u00e9 haces cuando sientes miedo?", "\u00bfC\u00f3mo puedes recordar que Jes\u00fas dice \u201CNo tengan miedo\u201D cuando est\u00e1s asustado?"],
+    prayer: "Querido Jes\u00fas, cuando tengamos miedo, ay\u00fadanos a escuchar Tu voz diciendo: \u201C\u00a1No tengan miedo!\u201D Danos valor y ay\u00fadanos a confiar en Ti. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 18:21\u201322",
+    text: "Pedro se acerc\u00f3 a Jes\u00fas y le pregunt\u00f3: \u201CSe\u00f1or, \u00bfcu\u00e1ntas veces tengo que perdonar a mi hermano que me ofende? \u00bfHasta siete veces?\u201D Jes\u00fas le contest\u00f3: \u201CNo te digo hasta siete veces, sino hasta setenta veces siete.\u201D",
+    explain: "Pedro pensaba que estaba siendo muy generoso al perdonar a alguien siete veces. Pero Jes\u00fas dijo: \u201CNo, no solo siete \u2014 \u00a1perdona setenta veces siete!\u201D No estaba contando de verdad. Quer\u00eda decir que debemos perdonar siempre, una y otra vez, sin llevar la cuenta. As\u00ed nos perdona Dios a nosotros, y as\u00ed debemos perdonarnos unos a otros.",
+    questions: ["\u00bfEs f\u00e1cil o dif\u00edcil perdonar a alguien que te lastim\u00f3?", "\u00bfC\u00f3mo se siente cuando alguien te perdona?"],
+    prayer: "Querido Jes\u00fas, ay\u00fadanos a perdonar a los dem\u00e1s como T\u00fa nos perdonas \u2014 una y otra vez, sin llevar la cuenta. Llena nuestros corazones de misericordia. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 12:6\u20137",
+    text: "\u00bfNo se venden cinco pajaritos por dos moneditas? Sin embargo, Dios no se olvida de ninguno de ellos. En cuanto a ustedes, hasta los cabellos de su cabeza est\u00e1n todos contados. No tengan miedo; ustedes valen m\u00e1s que muchos pajaritos.",
+    explain: "Jes\u00fas dice que Dios se preocupa hasta por los pajaritos m\u00e1s chiquitos \u2014 \u00a1no se olvida de ninguno! Y luego Jes\u00fas dice: \u201CDios hasta sabe cu\u00e1ntos cabellos tienes en la cabeza.\u201D As\u00ed de mucha atenci\u00f3n te pone Dios. Eres incre\u00edblemente valioso y precioso para \u00c9l.",
+    questions: ["\u00bfPuedes contar los cabellos de tu cabeza? \u00a1Dios s\u00ed puede! \u00bfC\u00f3mo te hace sentir eso?", "Si Dios cuida a los pajaritos, \u00bfcu\u00e1nto m\u00e1s te cuida a ti?"],
+    prayer: "Querido Dios, gracias por poner atenci\u00f3n a cada detallito sobre nosotros. Nunca somos olvidados. Ay\u00fadanos a recordar lo valiosos que somos para Ti. Am\u00e9n."
+  },
+  {
+    ref: "Juan 14:2\u20133",
+    text: "En la casa de mi Padre hay muchas habitaciones; si no fuera as\u00ed, se lo habr\u00eda dicho. Voy a prepararles un lugar. Y si me voy a prepararles un lugar, volver\u00e9 para llevarlos conmigo.",
+    explain: "\u00a1Jes\u00fas les dijo a Sus amigos que el cielo es como una casa enorme y hermosa con much\u00edsimos cuartos \u2014 y est\u00e1 preparando un cuarto especial para cada uno de nosotros! Prometi\u00f3 regresar y llevarnos ah\u00ed para que estemos con \u00c9l para siempre. \u00bfQu\u00e9 padr\u00edsimo, no?",
+    questions: ["\u00bfC\u00f3mo crees que ser\u00e1 tu cuarto en el cielo?", "\u00bfQu\u00e9 es lo que m\u00e1s te emociona de estar con Jes\u00fas para siempre?"],
+    prayer: "Querido Jes\u00fas, gracias por prepararnos un lugar especial en el cielo. Ay\u00fadanos a vivir hoy de una manera que nos acerque m\u00e1s a Ti. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 7:7",
+    text: "Pidan y se les dar\u00e1; busquen y encontrar\u00e1n; llamen y se les abrir\u00e1.",
+    explain: "Jes\u00fas nos dice algo maravilloso: \u00a1h\u00e1blenle a Dios! P\u00eddanle cosas. B\u00fasquenlo. Toquen Su puerta. No se est\u00e1 escondiendo \u2014 \u00a1quiere que lo encuentren! A Dios le encanta cuando rezamos y venimos a \u00c9l con todo lo que tenemos en el coraz\u00f3n.",
+    questions: ["\u00bfQu\u00e9 es algo que te gustar\u00eda pedirle a Dios ahorita?", "\u00bfD\u00f3nde ves a Dios en tu vida?"],
+    prayer: "Querido Dios, gracias por siempre estar listo para escucharnos. Ay\u00fadanos a venir a Ti con todo \u2014 nuestras esperanzas, nuestras preocupaciones y nuestras alegr\u00edas. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 18:16",
+    text: "Jes\u00fas llam\u00f3 a los ni\u00f1os y dijo: \u201CDejen que los ni\u00f1os vengan a m\u00ed y no se lo impidan, porque el Reino de Dios es de los que son como ellos.\u201D",
+    explain: "Jes\u00fas hizo algo muy importante con los ni\u00f1os. \u00a1Dijo que el Reino de Dios es de los que son como ni\u00f1os! Eso es porque los ni\u00f1os conf\u00edan f\u00e1cilmente, aman abiertamente y creen con todo el coraz\u00f3n. Jes\u00fas quiere que todos tengamos corazones como los de los ni\u00f1os.",
+    questions: ["\u00bfQu\u00e9 crees que hace a los ni\u00f1os tan especiales para Jes\u00fas?", "\u00bfC\u00f3mo pueden los adultos ser m\u00e1s como los ni\u00f1os en su manera de amar a Dios?"],
+    prayer: "Querido Jes\u00fas, gracias por decirnos que Tu reino es de ni\u00f1os como nosotros. Ay\u00fadanos a siempre mantener nuestra confianza de ni\u00f1os en Ti. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 25:35\u201336",
+    text: "Porque tuve hambre y ustedes me dieron de comer; tuve sed y me dieron de beber; era forastero y me recibieron; estaba desnudo y me vistieron.",
+    explain: "\u00a1Jes\u00fas dice algo incre\u00edble: cuando ayudamos a alguien que tiene hambre, sed, est\u00e1 solo o tiene fr\u00edo, en realidad estamos ayudando a Jes\u00fas! Cada persona con la que somos amables, es como ser amable con Jes\u00fas mismo. As\u00ed que cada vez que compartimos, ayudamos o recibimos a alguien, le estamos mostrando amor a Dios.",
+    questions: ["\u00bfC\u00f3mo podemos ayudar a alguien que tiene hambre o est\u00e1 solo?", "Si Jes\u00fas fuera la persona a la que ayudaste hoy, \u00bfqu\u00e9 har\u00edas por \u00c9l?"],
+    prayer: "Querido Jes\u00fas, abre nuestros ojos para verte en cada persona que conocemos. Ay\u00fadanos a dar de comer al hambriento, recibir al solo, y amar a todos como si fueran T\u00fa. Am\u00e9n."
+  },
+  {
+    ref: "Juan 15:5",
+    text: "Yo soy la vid; ustedes son las ramas. El que permanece en m\u00ed y yo en \u00e9l dar\u00e1 mucho fruto; separados de m\u00ed no pueden hacer nada.",
+    explain: "Jes\u00fas us\u00f3 una imagen de la naturaleza para explicar cu\u00e1nto lo necesitamos. Una rama en una vid recibe su comida y agua de la vid \u2014 \u00a1sin ella, la rama se seca! Jes\u00fas dice que \u00c9l es la vid y nosotros somos las ramas. Cuando nos mantenemos cerca de \u00c9l, crecemos fuertes y hacemos cosas hermosas. Sin \u00c9l, no podemos.",
+    questions: ["\u00bfAlguna vez has visto una rama que se cay\u00f3 de un \u00e1rbol? \u00bfQu\u00e9 le pas\u00f3?", "\u00bfC\u00f3mo podemos mantenernos conectados a Jes\u00fas todos los d\u00edas?"],
+    prayer: "Querido Jes\u00fas, T\u00fa eres nuestra vid y nosotros somos Tus ramas. Ay\u00fadanos a mantenernos cerca de Ti para crecer fuertes y dar buen fruto. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 5:44",
+    text: "Pero yo les digo: amen a sus enemigos y oren por quienes los persiguen.",
+    explain: "Esta es una de las cosas m\u00e1s dif\u00edciles que Jes\u00fas dijo: \u00a1ama a las personas que son malas contigo y reza por ellas! Suena muy dif\u00edcil, \u00bfverdad? Pero Jes\u00fas nos mostr\u00f3 c\u00f3mo \u2014 aun cuando la gente lo estaba lastimando, \u00c9l rez\u00f3 por ellos. Cuando amamos incluso a las personas dif\u00edciles de amar, nos volvemos m\u00e1s como Jes\u00fas.",
+    questions: ["\u00bfHay alguien que haya sido feo contigo? \u00bfPodemos rezar juntos por esa persona?", "\u00bfPor qu\u00e9 crees que Jes\u00fas nos pide que amemos incluso a los que son malos?"],
+    prayer: "Querido Jes\u00fas, amar a nuestros enemigos es muy dif\u00edcil. Por favor llena nuestros corazones con Tu amor para que podamos rezar por quienes nos lastiman, igual que T\u00fa lo hiciste. Am\u00e9n."
+  },
+  {
+    ref: "Marcos 1:17",
+    text: "\u201CVengan, s\u00edganme,\u201D les dijo Jes\u00fas, \u201Cy los har\u00e9 pescadores de hombres.\u201D",
+    explain: "Jes\u00fas caminaba junto al mar cuando vio a unos pescadores. Les dijo: \u201CS\u00edganme, y en vez de pescar peces, \u00a1van a ayudar a traer gente a Dios!\u201D \u00bfY sabes qu\u00e9? Soltaron sus redes de pescar al instante y lo siguieron. Jes\u00fas nos est\u00e1 llamando a cada uno de nosotros tambi\u00e9n \u2014 a seguirlo y compartir Su amor con los dem\u00e1s.",
+    questions: ["Si Jes\u00fas se te acercara hoy y dijera \u201CS\u00edgueme\u201D, \u00bfqu\u00e9 har\u00edas?", "\u00bfC\u00f3mo podemos \u201Cpescar personas\u201D compartiendo el amor de Dios?"],
+    prayer: "Querido Jes\u00fas, \u00a1queremos seguirte! Ay\u00fadanos a ser lo suficientemente valientes para dejar todo y decirte que s\u00ed cada d\u00eda. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 17:15\u201316",
+    text: "Uno de ellos, al verse curado, regres\u00f3 alabando a Dios a grandes voces. Se postr\u00f3 a los pies de Jes\u00fas y le dio las gracias.",
+    explain: "\u00a1Jes\u00fas san\u00f3 a diez personas que estaban muy enfermas \u2014 a las diez! Pero solo uno regres\u00f3 a darle las gracias. \u00a1Solo uno! Jes\u00fas se puso un poco triste de que los dem\u00e1s se olvidaron. Esto nos ense\u00f1a lo importante que es dar gracias \u2014 a Dios y a todos los que nos ayudan.",
+    questions: ["\u00bfSiempre te acuerdas de dar las gracias? \u00bfPor qu\u00e9 est\u00e1s agradecido hoy?", "\u00bfPor qu\u00e9 crees que dar gracias es tan importante para Jes\u00fas?"],
+    prayer: "Querido Jes\u00fas, no queremos ser como los nueve que se olvidaron. \u00a1Gracias por todo lo que nos das! Ay\u00fadanos a tener corazones agradecidos cada d\u00eda. Am\u00e9n."
+  },
+  {
+    ref: "Juan 1:5",
+    text: "La luz brilla en las tinieblas, y las tinieblas no han podido apagarla.",
+    explain: "\u00bfAlguna vez has prendido una linterna en un cuarto oscuro? \u00a1La oscuridad no puede detener la luz \u2014 la luz siempre gana! As\u00ed es Jes\u00fas. Aunque las cosas parezcan oscuras y den miedo en el mundo, la luz de Jes\u00fas sigue brillando y la oscuridad nunca, nunca podr\u00e1 apagarla.",
+    questions: ["\u00bfQu\u00e9 le pasa a la oscuridad cuando prendes una luz?", "\u00bfC\u00f3mo puede la luz de Jes\u00fas ayudarnos cuando nos sentimos tristes o con miedo?"],
+    prayer: "Querido Jes\u00fas, T\u00fa eres la luz que la oscuridad nunca puede vencer. Brilla con fuerza en nuestros corazones y en nuestro hogar. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 11:28",
+    text: "Vengan a m\u00ed todos los que est\u00e1n cansados y agobiados, y yo les dar\u00e9 descanso.",
+    explain: "A veces nos sentimos cansados \u2014 no solo en el cuerpo, sino tambi\u00e9n en el coraz\u00f3n. Tal vez estamos preocupados o tristes o cargando algo pesado por dentro. Jes\u00fas dice: \u201CVengan a m\u00ed. Tr\u00e1iganme todo eso, y yo les dar\u00e9 descanso.\u201D Quiere cargar nuestras cosas pesadas para que nos sintamos ligeros y en paz.",
+    questions: ["\u00bfC\u00f3mo se siente cuando est\u00e1s muy cansado y por fin puedes descansar?", "\u00bfHay algo pesado en tu coraz\u00f3n que quieras darle a Jes\u00fas?"],
+    prayer: "Querido Jes\u00fas, cuando estemos cansados y agobiados, venimos a Ti. Toma nuestras preocupaciones y sentimientos pesados y danos Tu descanso de paz. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 8:24\u201325",
+    text: "Los disc\u00edpulos fueron a despertarlo diciendo: \u201C\u00a1Maestro, Maestro, nos hundimos!\u201D \u00c9l se levant\u00f3, reprendi\u00f3 al viento y a las olas embravecidas; cesaron, y todo qued\u00f3 en calma. \u201C\u00bfD\u00f3nde est\u00e1 la fe de ustedes?\u201D les dijo a sus disc\u00edpulos.",
+    explain: "\u00a1Los amigos de Jes\u00fas estaban en una barca durante una tormenta terrible y Jes\u00fas estaba dormido! Estaban tan asustados que lo despertaron gritando: \u201C\u00a1Nos vamos a ahogar!\u201D Jes\u00fas se levant\u00f3, le dijo a la tormenta que parara \u2014 \u00a1y par\u00f3! Luego les pregunt\u00f3: \u201C\u00bfD\u00f3nde est\u00e1 su fe?\u201D Quer\u00eda que confiaran en \u00c9l, incluso en los momentos m\u00e1s aterradores.",
+    questions: ["\u00bfQu\u00e9 haces cuando est\u00e1s muy asustado? \u00bfTe acuerdas de pedirle ayuda a Jes\u00fas?", "\u00bfPor qu\u00e9 crees que Jes\u00fas pod\u00eda dormir durante la tormenta?"],
+    prayer: "Querido Jes\u00fas, hasta en las tormentas m\u00e1s grandes de nuestras vidas, ay\u00fadanos a confiar en Ti. Siempre tienes el control y no necesitamos tener miedo. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 19:26",
+    text: "Jes\u00fas los mir\u00f3 y les dijo: \u201CPara los hombres esto es imposible, pero para Dios todo es posible.\u201D",
+    explain: "Algunas cosas parecen absolutamente imposibles \u2014 muy dif\u00edciles, muy grandes, muy aterradoras. \u00a1Pero Jes\u00fas dice que con Dios, nada es imposible! No hay nada demasiado grande para que Dios lo maneje. Puede hacer cualquier cosa, y est\u00e1 de nuestro lado.",
+    questions: ["\u00bfQu\u00e9 es algo que te parece imposible ahorita?", "\u00bfC\u00f3mo te hace sentir saber que Dios puede hacer cualquier cosa?"],
+    prayer: "Querido Dios, cuando las cosas parezcan imposibles, recu\u00e9rdanos que nada es demasiado dif\u00edcil para Ti. Confiamos en que puedes hacer todas las cosas. Am\u00e9n."
+  },
+  {
+    ref: "Marcos 9:36\u201337",
+    text: "Tom\u00f3 a un ni\u00f1o y lo puso en medio de ellos. Lo abraz\u00f3 y les dijo: \u201CEl que recibe en mi nombre a uno de estos ni\u00f1os, me recibe a m\u00ed.\u201D",
+    explain: "Los amigos de Jes\u00fas estaban discutiendo sobre qui\u00e9n era el m\u00e1s importante. Entonces Jes\u00fas tom\u00f3 a un ni\u00f1o y dijo: \u201C\u00bfVen a este ni\u00f1o? Cuando recibes a un ni\u00f1o, me recibes a M\u00ed.\u201D Jes\u00fas mostr\u00f3 que las personas m\u00e1s importantes no son las m\u00e1s grandes o las m\u00e1s fuertes \u2014 \u00a1a veces son las m\u00e1s peque\u00f1as!",
+    questions: ["\u00bfC\u00f3mo te hace sentir saber que recibirte es como recibir a Jes\u00fas?", "\u00bfC\u00f3mo podemos recibir a otros ni\u00f1os y hacerlos sentir especiales?"],
+    prayer: "Querido Jes\u00fas, gracias por mostrarnos que los ni\u00f1os son importantes para Ti. Ay\u00fadanos a recibir a todos con los brazos abiertos, como lo har\u00edamos Contigo. Am\u00e9n."
+  },
+  {
+    ref: "Juan 21:6",
+    text: "\u00c9l les dijo: \u201CTiren la red al lado derecho de la barca y encontrar\u00e1n.\u201D As\u00ed lo hicieron, y era tanta la cantidad de peces que no pod\u00edan sacar la red.",
+    explain: "\u00a1Los amigos de Jes\u00fas hab\u00edan estado pescando toda la noche y no hab\u00edan atrapado nada \u2014 cero peces! Entonces Jes\u00fas les dijo que probaran del otro lado de la barca. Le hicieron caso, \u00a1y de repente atraparon tantos peces que la red casi se romp\u00eda! Cuando escuchamos a Jes\u00fas, aunque no tenga sentido, pasan cosas incre\u00edbles.",
+    questions: ["\u00bfAlguna vez intentaste algo de otra manera y funcion\u00f3?", "\u00bfPor qu\u00e9 es importante escuchar a Jes\u00fas, aunque no entendamos?"],
+    prayer: "Querido Jes\u00fas, ay\u00fadanos a escucharte y confiar en Tus instrucciones, aunque no tengan sentido para nosotros. \u00a1T\u00fa siempre sabes el mejor camino! Am\u00e9n."
+  },
+  {
+    ref: "Lucas 1:37",
+    text: "Porque para Dios no hay nada imposible.",
+    explain: "El \u00e1ngel Gabriel le dijo esto a Mar\u00eda cuando le anunci\u00f3 que ser\u00eda la madre de Jes\u00fas. Significa que cada cosa que Dios promete se va a cumplir. Dios nunca rompe Sus promesas \u2014 ni una, nunca. Lo que \u00c9l dice, lo cumple.",
+    questions: ["\u00bfQu\u00e9 promesas de Dios conoces?", "\u00bfPuedes pensar en una vez que algo bueno pas\u00f3 que Dios ten\u00eda planeado?"],
+    prayer: "Querido Dios, confiamos en que cada promesa que haces se va a cumplir. Ay\u00fadanos a aferrarnos a Tus palabras y creer en ellas con todo el coraz\u00f3n. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 5:7",
+    text: "Bienaventurados los misericordiosos, porque ellos alcanzar\u00e1n misericordia.",
+    explain: "Jes\u00fas dice que las personas que muestran misericordia \u2014 que significa ser amable y perdonar aunque alguien no lo merezca \u2014 \u00a1tambi\u00e9n recibir\u00e1n misericordia! Cuando elegimos ser amables y perdonar a los dem\u00e1s, Dios es amable y nos perdona a nosotros.",
+    questions: ["\u00bfQu\u00e9 significa mostrar misericordia a alguien?", "\u00bfCu\u00e1ndo te han mostrado misericordia a ti?"],
+    prayer: "Querido Jes\u00fas, ay\u00fadanos a ser misericordiosos con los dem\u00e1s, especialmente cuando es dif\u00edcil. Gracias por siempre ser misericordioso y amable con nosotros. Am\u00e9n."
+  },
+  {
+    ref: "Juan 20:29",
+    text: "Jes\u00fas le dijo: \u201C\u00bfCre\u00edste porque me has visto? Dichosos los que creen sin haber visto.\u201D",
+    explain: "Despu\u00e9s de que Jes\u00fas resucit\u00f3, Su amigo Tom\u00e1s dijo que no lo creer\u00eda hasta poder ver y tocar a Jes\u00fas. Cuando Jes\u00fas se apareci\u00f3, \u00a1Tom\u00e1s crey\u00f3! Pero Jes\u00fas dijo algo especial: \u201CLos que creen en M\u00ed sin verme son dichosos.\u201D \u00a1Esos somos nosotros! Creemos en Jes\u00fas aunque no lo podemos ver, y eso hace nuestra fe extra especial.",
+    questions: ["No podemos ver a Jes\u00fas con nuestros ojos, pero \u00bfc\u00f3mo sabemos que es real?", "\u00bfQu\u00e9 te ayuda a creer en Jes\u00fas aunque no lo puedas ver?"],
+    prayer: "Querido Jes\u00fas, aunque no Te podemos ver, creemos en Ti con todo el coraz\u00f3n. Bendice nuestra fe y ay\u00fadala a crecer m\u00e1s fuerte cada d\u00eda. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 13:45\u201346",
+    text: "El Reino de los cielos se parece tambi\u00e9n a un comerciante que buscaba perlas finas. Al encontrar una perla de gran valor, fue y vendi\u00f3 todo lo que ten\u00eda y la compr\u00f3.",
+    explain: "Jes\u00fas cont\u00f3 la historia de un hombre que encontr\u00f3 la perla m\u00e1s hermosa del mundo entero. \u00a1Era tan incre\u00edble que vendi\u00f3 todo lo que ten\u00eda solo para comprarla! Jes\u00fas dice que as\u00ed es el Reino de Dios \u2014 es el tesoro m\u00e1s valioso y maravilloso que existe, que vale m\u00e1s que cualquier otra cosa.",
+    questions: ["\u00bfCu\u00e1l es tu posesi\u00f3n m\u00e1s valiosa?", "\u00bfPor qu\u00e9 crees que Jes\u00fas vale m\u00e1s que cualquier cosa que podamos tener?"],
+    prayer: "Querido Jes\u00fas, ay\u00fadanos a valorarte a Ti y a Tu reino por encima de todo lo dem\u00e1s. T\u00fa eres el regalo m\u00e1s precioso de todos. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 23:34",
+    text: "Jes\u00fas dec\u00eda: \u201CPadre, perd\u00f3nalos, porque no saben lo que hacen.\u201D",
+    explain: "Incluso cuando Jes\u00fas estaba en la cruz, sufriendo tanto, rez\u00f3 por las personas que lo lastimaron. \u00a1Les pidi\u00f3 a Dios que los perdonara! Ese es el amor m\u00e1s grande e incre\u00edble que existe. Jes\u00fas perdon\u00f3 incluso cuando era lo m\u00e1s dif\u00edcil de hacer.",
+    questions: ["\u00bfPor qu\u00e9 a veces es dif\u00edcil perdonar a alguien?", "\u00bfC\u00f3mo puede el ejemplo de Jes\u00fas en la cruz ayudarnos cuando necesitamos perdonar?"],
+    prayer: "Querido Jes\u00fas, Tu perd\u00f3n es el amor m\u00e1s incre\u00edble del mundo. Ay\u00fadanos a perdonar a los dem\u00e1s, aunque sea dif\u00edcil, porque T\u00fa nos perdonaste primero. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 6:21",
+    text: "Porque donde est\u00e9 tu tesoro, all\u00ed estar\u00e1 tambi\u00e9n tu coraz\u00f3n.",
+    explain: "Jes\u00fas nos dice que lo que m\u00e1s amamos, ah\u00ed vive nuestro coraz\u00f3n. Si amamos los juguetes y los juegos m\u00e1s que nada, nuestro coraz\u00f3n se queda atrapado ah\u00ed. \u00a1Pero si amamos a Dios y a las personas, nuestros corazones est\u00e1n en el mejor lugar! Jes\u00fas quiere que guardemos tesoros en el cielo siendo amables, cari\u00f1osos y buenos.",
+    questions: ["\u00bfQu\u00e9 es lo m\u00e1s importante para ti?", "\u00bfC\u00f3mo podemos poner nuestros corazones en las cosas que m\u00e1s le importan a Dios?"],
+    prayer: "Querido Jes\u00fas, ay\u00fadanos a valorar las cosas que m\u00e1s importan \u2014 amar a Dios y amar a los dem\u00e1s. Que nuestros corazones est\u00e9n donde T\u00fa est\u00e1s. Am\u00e9n."
+  },
+  {
+    ref: "Marcos 5:41\u201342",
+    text: "La tom\u00f3 de la mano y le dijo: \u201CTalitha koum\u201D, que significa: \u201CNi\u00f1a, a ti te digo, lev\u00e1ntate.\u201D Al instante la ni\u00f1a se levant\u00f3 y comenz\u00f3 a caminar.",
+    explain: "Una ni\u00f1a hab\u00eda muerto y todos estaban llorando. Pero Jes\u00fas fue a ella, le tom\u00f3 la mano con cari\u00f1o y le dijo: \u201CNi\u00f1a, lev\u00e1ntate.\u201D \u00a1Y ella abri\u00f3 los ojos, se levant\u00f3 y estaba completamente viva otra vez! Jes\u00fas es tan poderoso que hasta tiene poder sobre la muerte. Y lo hizo todo mientras le sosten\u00eda la mano con ternura.",
+    questions: ["Jes\u00fas le dijo \u201Cni\u00f1a\u201D con tanta ternura. \u00bfQu\u00e9 te dice eso sobre Jes\u00fas?", "\u00bfC\u00f3mo te hace sentir saber que nada es demasiado grande o dif\u00edcil para Jes\u00fas?"],
+    prayer: "Querido Jes\u00fas, eres tan poderoso y tan tierno al mismo tiempo. Cuando las cosas se sientan sin esperanza, recu\u00e9rdanos que T\u00fa puedes hacer todas las cosas nuevas. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 6:38",
+    text: "Den y se les dar\u00e1: una medida buena, apretada, sacudida y rebosante se les echar\u00e1 en el regazo.",
+    explain: "\u00a1Jes\u00fas dice que cuando damos \u2014 nuestro tiempo, nuestros juguetes, nuestro amor, nuestra ayuda \u2014 Dios nos da de vuelta todav\u00eda M\u00c1S! Es como cuando sirves cereal en un taz\u00f3n y lo sacudes para que quepa m\u00e1s y m\u00e1s hasta que se desborda. As\u00ed de generoso es Dios con las personas que son generosas.",
+    questions: ["\u00bfQu\u00e9 es algo que puedes darle a alguien hoy?", "\u00bfAlguien ha sido muy generoso contigo? \u00bfC\u00f3mo te hizo sentir?"],
+    prayer: "Querido Jes\u00fas, \u00a1haznos dadores generosos! Ay\u00fadanos a compartir libremente, sabiendo que T\u00fa siempre nos cuidar\u00e1s y nos llenar\u00e1s con todav\u00eda m\u00e1s. Am\u00e9n."
+  },
+  {
+    ref: "Juan 10:27\u201328",
+    text: "Mis ovejas escuchan mi voz; yo las conozco y ellas me siguen. Yo les doy vida eterna, y nunca perecer\u00e1n; nadie las arrebatar\u00e1 de mi mano.",
+    explain: "Jes\u00fas dice que somos como Sus ovejas, y \u00c9l es nuestro Pastor. Nos conoce, nos llama por nombre, y cuando seguimos Su voz, nadie nos puede quitar de \u00c9l. Estamos seguros en Sus manos para siempre. Nada nos puede separar del amor de Jes\u00fas.",
+    questions: ["\u00bfC\u00f3mo escuchas la voz de Jes\u00fas?", "\u00bfC\u00f3mo te hace sentir saber que nadie te puede arrebatar de las manos de Jes\u00fas?"],
+    prayer: "Querido Jes\u00fas, gracias por sostenernos seguros en Tus manos. Ay\u00fadanos a escuchar Tu voz y seguirte a donde nos lleves. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 2:10\u201311",
+    text: "Al ver la estrella, se llenaron de alegr\u00eda. Entraron en la casa y vieron al ni\u00f1o con Mar\u00eda, su madre. Se postraron y lo adoraron. Luego abrieron sus tesoros y le ofrecieron regalos de oro, incienso y mirra.",
+    explain: "Los Reyes Magos viajaron un camino larg\u00edsimo \u2014 siguiendo una estrella \u2014 solo para encontrar al ni\u00f1o Jes\u00fas. \u00a1Cuando por fin lo encontraron, estaban tan felices! Se arrodillaron, lo adoraron y le dieron sus mejores regalos. Hasta de beb\u00e9, la gente sab\u00eda que Jes\u00fas era un Rey digno de adorar.",
+    questions: ["Si pudieras llevarle un regalo al ni\u00f1o Jes\u00fas, \u00bfqu\u00e9 le llevar\u00edas?", "\u00bfCu\u00e1l es el mejor regalo que puedes darle a Jes\u00fas ahorita?"],
+    prayer: "Querido Jes\u00fas, como los Reyes Magos, queremos darte lo mejor de nosotros. Ay\u00fadanos a adorarte y ofrecerte nuestros corazones cada d\u00eda. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 9:16\u201317",
+    text: "Jes\u00fas tom\u00f3 los cinco panes y los dos pescados, levant\u00f3 los ojos al cielo, dio gracias, los parti\u00f3 y se los fue dando a los disc\u00edpulos para que los repartieran. Todos comieron hasta quedar satisfechos.",
+    explain: "Miles de personas ten\u00edan hambre y todo lo que ten\u00edan era el almuerzo de un ni\u00f1o. Pero Jes\u00fas le dio gracias a Dios, parti\u00f3 el pan, \u00a1y sigui\u00f3 saliendo y saliendo! Todos comieron hasta llenarse. Jes\u00fas nos muestra que cuando le damos lo que tenemos a Dios y le damos gracias, \u00c9l puede multiplicarlo m\u00e1s all\u00e1 de lo que imaginamos.",
+    questions: ["\u00bfQu\u00e9 tienes que puedas ofrecerle a Dios?", "\u00bfPor qu\u00e9 Jes\u00fas dio gracias antes de que pasara el milagro?"],
+    prayer: "Querido Jes\u00fas, Te damos todo lo que tenemos, aunque parezca poquito. Confiamos en que T\u00fa puedes convertirlo en algo maravilloso. \u00a1Gracias! Am\u00e9n."
+  },
+  {
+    ref: "Mateo 5:6",
+    text: "Bienaventurados los que tienen hambre y sed de justicia, porque ellos ser\u00e1n saciados.",
+    explain: "\u00bfConoces esa sensaci\u00f3n de cuando tienes mucha, mucha hambre y lo \u00fanico en lo que puedes pensar es en comida? \u00a1Jes\u00fas dice que deber\u00edamos querer hacer lo correcto con esas mismas ganas! Las personas que de verdad quieren ser buenas y hacer lo correcto \u2014 Dios las llenar\u00e1 de bondad.",
+    questions: ["\u00bfQu\u00e9 significa hacer lo correcto, aunque sea dif\u00edcil?", "\u00bfC\u00f3mo podemos tener \u2018hambre\u2019 de bondad cada d\u00eda?"],
+    prayer: "Querido Jes\u00fas, danos un hambre profunda de hacer lo correcto. Ll\u00e9nanos de Tu bondad para poder compartirla con el mundo. Am\u00e9n."
+  },
+  {
+    ref: "Marcos 10:51\u201352",
+    text: "\u201C\u00bfQu\u00e9 quieres que haga por ti?\u201D le pregunt\u00f3 Jes\u00fas. El ciego le dijo: \u201CMaestro, quiero ver.\u201D \u201CVete,\u201D le dijo Jes\u00fas, \u201Ctu fe te ha sanado.\u201D Al instante recobr\u00f3 la vista y sigui\u00f3 a Jes\u00fas por el camino.",
+    explain: "Un hombre ciego llamado Bartimeo segu\u00eda gritando a Jes\u00fas, aunque la gente le dec\u00eda que se callara. Jes\u00fas se detuvo y le hizo una pregunta hermosa: \u201C\u00bfQu\u00e9 quieres que haga por ti?\u201D Bartimeo dijo: \u201CQuiero ver.\u201D \u00a1Y Jes\u00fas le san\u00f3 los ojos al instante! Jes\u00fas siempre se detiene por nosotros y nos pregunta qu\u00e9 necesitamos.",
+    questions: ["Si Jes\u00fas te preguntara \u2018\u00bfQu\u00e9 quieres que haga por ti?\u2019, \u00bfqu\u00e9 le dir\u00edas?", "\u00bfPor qu\u00e9 Bartimeo sigui\u00f3 gritando aunque la gente le dec\u00eda que parara?"],
+    prayer: "Querido Jes\u00fas, gracias por siempre detenerte a escucharnos. Ay\u00fadanos a ser lo suficientemente valientes para pedirte lo que necesitamos. Am\u00e9n."
+  },
+  {
+    ref: "Juan 3:16",
+    text: "Porque tanto am\u00f3 Dios al mundo que dio a su Hijo \u00fanico, para que todo el que cree en \u00e9l no se pierda, sino que tenga vida eterna.",
+    explain: "\u00a1Este podr\u00eda ser el vers\u00edculo m\u00e1s famoso de toda la Biblia! Nos dice que Dios am\u00f3 al mundo entero \u2014 a cada persona \u2014 tanto, tanto, que envi\u00f3 a Jes\u00fas, Su propio Hijo, para que cualquiera que crea en \u00c9l pueda vivir para siempre con Dios. \u00a1As\u00ed de grande es el amor de Dios!",
+    questions: ["\u00bfQu\u00e9 tan grande crees que es el amor de Dios?", "\u00bfQu\u00e9 significa vivir para siempre con Dios?"],
+    prayer: "Querido Dios, Tu amor es tan grande que nos diste a Jes\u00fas. Gracias por amar al mundo entero, y gracias por amar a nuestra familia. Ay\u00fadanos a compartir este amor con todos. Am\u00e9n."
+  },
+  {
+    ref: "Lucas 5:4\u20136",
+    text: "Cuando termin\u00f3 de hablar, le dijo a Sim\u00f3n: \u201CLleva la barca a la parte m\u00e1s profunda y echen all\u00ed las redes.\u201D Sim\u00f3n le contest\u00f3: \u201CMaestro, hemos trabajado toda la noche y no hemos pescado nada. Pero como T\u00fa lo dices, echar\u00e9 las redes.\u201D Cuando lo hicieron, recogieron una cantidad tan grande de peces que las redes se romp\u00edan.",
+    explain: "Sim\u00f3n Pedro hab\u00eda estado pescando toda la noche sin nada de suerte. Estaba cansado y quer\u00eda irse a casa. Pero cuando Jes\u00fas le dijo: \u201CInténtalo otra vez en agua profunda\u201D, Pedro confi\u00f3 en \u00c9l, aunque no ten\u00eda sentido. \u00a1Y atraparon tantos peces que las redes casi se romp\u00edan! A veces Jes\u00fas nos pide que lo intentemos otra vez cuando ya queremos rendirnos.",
+    questions: ["\u00bfAlguna vez quisiste rendirte en algo? \u00bfQu\u00e9 pas\u00f3?", "\u00bfPor qu\u00e9 es importante seguir intentando cuando Jes\u00fas nos lo pide?"],
+    prayer: "Querido Jes\u00fas, aunque estemos cansados o queramos rendirnos, ay\u00fadanos a confiar en Ti e intentar otra vez. Siempre tienes algo incre\u00edble planeado. Am\u00e9n."
+  },
+  {
+    ref: "Mateo 18:3",
+    text: "Les aseguro que a menos que cambien y se hagan como ni\u00f1os, no entrar\u00e1n en el Reino de los cielos.",
+    explain: "Los amigos de Jes\u00fas le preguntaron qui\u00e9n es el m\u00e1s importante en el cielo. Y Jes\u00fas sorprendi\u00f3 a todos \u2014 \u00a1se\u00f1al\u00f3 a un ni\u00f1o y dijo que los adultos necesitan ser m\u00e1s como ni\u00f1os! Los ni\u00f1os conf\u00edan f\u00e1cilmente, aman libremente y no se preocupan por ser los m\u00e1s importantes. Ese es exactamente el tipo de coraz\u00f3n que Jes\u00fas ama.",
+    questions: ["\u00bfQu\u00e9 hace especiales a los ni\u00f1os?", "\u00bfC\u00f3mo puede toda nuestra familia ser m\u00e1s como ni\u00f1os en nuestra fe?"],
+    prayer: "Querido Jes\u00fas, gracias por decirnos que los ni\u00f1os son tan importantes para Ti. Ay\u00fadanos a todos \u2014 grandes y chicos \u2014 a tener corazones sencillos, confiados y como de ni\u00f1os. Am\u00e9n."
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════
+// LITURGICAL SEASON LOGIC
+// ═══════════════════════════════════════════════════════════════
+function easterDate(year) {
+  var a=year%19, b=Math.floor(year/100), c=year%100, d=Math.floor(b/4), e=b%4;
+  var f=Math.floor((b+8)/25), g=Math.floor((b-f+1)/3);
+  var h=(19*a+b-d-g+15)%30, i=Math.floor(c/4), k=c%4;
+  var l=(32+2*e+2*i-h-k)%7, m=Math.floor((a+11*h+22*l)/451);
+  var month=Math.floor((h+l-7*m+114)/31)-1, day=((h+l-7*m+114)%31)+1;
+  return new Date(year, month, day);
+}
+
+function toLiturgicalSeason(date) {
+  var year=date.getFullYear(), easter=easterDate(year);
+  var ashWed=new Date(easter); ashWed.setDate(easter.getDate()-46);
+  var palmSun=new Date(easter); palmSun.setDate(easter.getDate()-7);
+  var goodFri=new Date(easter); goodFri.setDate(easter.getDate()-2);
+  var pentecost=new Date(easter); pentecost.setDate(easter.getDate()+49);
+  var christmas=new Date(year,11,25);
+  var jan6=new Date(year,0,6), baptism=new Date(jan6);
+  if(jan6.getDay()===0){baptism.setDate(7);}else{baptism.setDate(6+(7-jan6.getDay()));}
+  var advent=new Date(year,11,25); advent.setDate(25-advent.getDay()-21);
+  var d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  if(d>=christmas) return 'christmas';
+  if(d>=advent) return 'advent';
+  if(d>=pentecost) return 'ordinary';
+  if(d>=easter) return 'easter';
+  if(d.getTime()===goodFri.getTime()||d.getTime()===palmSun.getTime()) return 'passion';
+  if(d>=ashWed) return 'lent';
+  if(d<=baptism) return 'christmas';
+  return 'ordinary';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LANGUAGE & RENDERING
+// ═══════════════════════════════════════════════════════════════
+var currentLang = localStorage.getItem('gospel-lang') || 'en';
+var dayOffset = 0;
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('gospel-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+  document.documentElement.lang = lang;
+  renderDay();
+}
+
+function getDayOfYear(date) {
+  var start = new Date(date.getFullYear(), 0, 0);
+  return Math.floor((date - start) / 86400000);
+}
+
+function applySeasonColors(date) {
+  var season = toLiturgicalSeason(date);
+  var root = document.documentElement;
+  var colors = {
+    advent:    { accent:'#9b72b0', dim:'#7d5a91', glow:'rgba(155,114,176,0.12)' },
+    christmas: { accent:'#d4af37', dim:'#b8962e', glow:'rgba(212,175,55,0.12)' },
+    lent:      { accent:'#9b72b0', dim:'#7d5a91', glow:'rgba(155,114,176,0.12)' },
+    passion:   { accent:'#c0392b', dim:'#a33225', glow:'rgba(192,57,43,0.12)' },
+    easter:    { accent:'#d4af37', dim:'#b8962e', glow:'rgba(212,175,55,0.12)' },
+    ordinary:  { accent:'#5a9e6f', dim:'#4a8a5e', glow:'rgba(90,158,111,0.12)' }
+  };
+  var c = colors[season] || colors.ordinary;
+  root.style.setProperty('--accent', c.accent);
+  root.style.setProperty('--accent-dim', c.dim);
+  root.style.setProperty('--accent-glow', c.glow);
+  var existingStyle = document.getElementById('selection-style');
+  if (existingStyle) existingStyle.remove();
+  var style = document.createElement('style');
+  style.id = 'selection-style';
+  style.textContent = '::selection { background: ' + c.accent + '59; }';
+  document.head.appendChild(style);
+  return season;
+}
+
+function renderDay() {
+  var L = ui[currentLang];
+  var passages = currentLang === 'es' ? passages_es : passages_en;
+  var now = new Date();
+  now.setDate(now.getDate() + dayOffset);
+
+  var season = applySeasonColors(now);
+  var seasonName = L.seasonNames[season] || L.seasonNames.ordinary;
+
+  // UI labels
+  document.getElementById('hero-title').textContent = L.heroTitle;
+  document.getElementById('hero-subtitle').textContent = L.heroSubtitle;
+  document.getElementById('hero-scroll-text').textContent = L.heroScroll;
+  document.getElementById('back-link').textContent = L.backLink;
+  document.getElementById('lbl-gospel').textContent = L.lblGospel;
+  document.getElementById('lbl-meaning').textContent = L.lblMeaning;
+  document.getElementById('lbl-discuss').textContent = L.lblDiscuss;
+  document.getElementById('lbl-prayer-divider').textContent = L.lblPrayerDivider;
+  document.getElementById('lbl-pray').textContent = L.lblPray;
+  document.getElementById('btn-prev').textContent = L.btnPrev;
+  document.getElementById('btn-next').textContent = L.btnNext;
+
+  // Date header
+  document.getElementById('day-number').textContent = now.getDate();
+  document.getElementById('day-details').textContent = L.days[now.getDay()] + ', ' + L.months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+  document.getElementById('season-badge').textContent = seasonName;
+  document.getElementById('liturgical-day-label').textContent = seasonName;
+
+  // Footer
+  document.getElementById('footer-text').textContent = '\u271D\uFE0E ' + seasonName + ' \u00B7 Ad Maiorem Dei Gloriam \u271D\uFE0E';
+
+  // Passage
+  var doy = getDayOfYear(now);
+  var idx = doy % passages.length;
+  var p = passages[idx];
+
+  document.getElementById('scripture-ref').textContent = p.ref;
+  document.getElementById('scripture-text').textContent = p.text;
+  document.getElementById('explanation-text').textContent = p.explain;
+
+  var qList = document.getElementById('questions-list');
+  qList.innerHTML = '';
+  p.questions.forEach(function(q, i) {
+    var li = document.createElement('li');
+    li.innerHTML = '<span class="question-number">' + (i + 1) + '</span><span>' + q + '</span>';
+    qList.appendChild(li);
+  });
+
+  document.getElementById('family-prayer').innerHTML = '<p>' + p.prayer + '</p>';
+
+  // Nav label
+  var label = document.getElementById('nav-today-label');
+  if (dayOffset === 0) label.textContent = L.today;
+  else if (dayOffset === -1) label.textContent = L.yesterday;
+  else if (dayOffset === 1) label.textContent = L.tomorrow;
+  else label.textContent = L.months[now.getMonth()] + ' ' + now.getDate();
+}
+
+function changeDay(delta) {
+  var content = document.getElementById('gospel-content');
+  content.classList.add('fading');
+  setTimeout(function() {
+    dayOffset += delta;
+    renderDay();
+    content.classList.remove('fading');
+  }, 250);
+}
+
+// Initialize
+(function() {
+  document.getElementById('btn-en').classList.toggle('active', currentLang === 'en');
+  document.getElementById('btn-es').classList.toggle('active', currentLang === 'es');
+  document.documentElement.lang = currentLang;
+  renderDay();
+})();
+
+document.querySelector('.hero-scroll').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('gospel-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+</script>
+
+</body>
+</html>
