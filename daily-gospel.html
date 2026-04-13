@@ -30,7 +30,7 @@
       --shadow: rgba(0, 0, 0, 0.25);
     }
 
-    html { font-size: 112%; }
+    html { font-size: 129%; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     ::selection { background: rgba(217, 119, 87, 0.35); }
@@ -129,85 +129,36 @@
       background: rgba(25, 26, 26, 0.25);
     }
 
-    /* Hero */
-    .hero {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      min-height: 500px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    /* Title Banner */
+    .title-banner {
       text-align: center;
-      overflow: hidden;
+      padding: 2.5rem 1.5rem 1.5rem;
     }
 
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background: rgba(25, 26, 26, 0.35);
-      z-index: 0;
-    }
+    .title-banner-icon { font-size: 1.8rem; display: block; margin-bottom: 0.6rem; opacity: 0.9; }
 
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      padding: 2rem;
-      max-width: 600px;
-    }
-
-    .hero-icon { font-size: 2.5rem; display: block; margin-bottom: 1.25rem; opacity: 0.9; }
-
-    .hero-title {
-      font-size: clamp(1.5rem, 5vw, 2.2rem);
+    .title-banner-title {
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
       font-weight: 300;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #fff;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.4rem;
     }
 
-    .hero-liturgical {
-      font-size: clamp(0.85rem, 2.5vw, 1rem);
+    .title-banner-liturgical {
+      font-size: clamp(0.7rem, 2vw, 0.82rem);
       font-weight: 500;
       color: var(--accent);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.25rem;
       letter-spacing: 0.04em;
     }
 
-    .hero-subtitle {
-      font-size: clamp(0.72rem, 2vw, 0.82rem);
+    .title-banner-subtitle {
+      font-size: clamp(0.6rem, 1.8vw, 0.7rem);
       font-weight: 300;
-      color: rgba(255, 255, 255, 0.55);
-      letter-spacing: 0.06em;
-    }
-
-    .hero-scroll {
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1;
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 0.65rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.4rem;
-      transition: color 0.2s ease;
-    }
-
-    .hero-scroll:hover { color: var(--accent); }
-    .hero-scroll-arrow { font-size: 1.2rem; animation: bounce 2s infinite; }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(5px); }
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.05em;
     }
 
     /* Top bar: back link + language toggle */
@@ -536,7 +487,6 @@
     .fade-content.fading { opacity: 0; }
 
     @media (max-width: 480px) {
-      .hero { min-height: 100vh; }
       main { padding: 0.75rem 0.75rem 3rem; }
       .scripture-body { padding: 0.85rem 1.15rem 1.25rem; }
       .scripture-text { font-size: 0.98rem; padding-left: 1rem; }
@@ -560,21 +510,14 @@
 </div>
 <div class="watercolor-overlay"></div>
 
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <span class="hero-icon">📖</span>
-    <h1 class="hero-title" id="hero-title">Daily Gospel for Kids</h1>
-    <p class="hero-liturgical" id="liturgical-day-label"></p>
-    <p class="hero-subtitle" id="hero-subtitle">Let the children come to me — Matthew 19:14</p>
-  </div>
-  <a href="#gospel-content" class="hero-scroll">
-    <span id="hero-scroll-text">Today's Reading</span>
-    <span class="hero-scroll-arrow">▾</span>
-  </a>
-</section>
-
 <main>
+  <div class="title-banner">
+    <span class="title-banner-icon">📖</span>
+    <h1 class="title-banner-title" id="hero-title">Daily Gospel for Kids</h1>
+    <p class="title-banner-liturgical" id="liturgical-day-label"></p>
+    <p class="title-banner-subtitle" id="hero-subtitle">Let the children come to me — Matthew 19:14</p>
+  </div>
+
   <div class="top-bar">
     <a class="back-link" href="daily-prayers.html" id="back-link">← Back to Prayers</a>
     <div class="lang-toggle">
@@ -1648,7 +1591,6 @@ function renderDay() {
   // UI labels
   document.getElementById('hero-title').textContent = L.heroTitle;
   document.getElementById('hero-subtitle').textContent = L.heroSubtitle;
-  document.getElementById('hero-scroll-text').textContent = L.heroScroll;
   document.getElementById('back-link').textContent = L.backLink;
   document.getElementById('lbl-gospel').textContent = L.lblGospel;
   document.getElementById('lbl-meaning').textContent = L.lblMeaning;
@@ -1711,11 +1653,6 @@ function changeDay(delta) {
   document.documentElement.lang = currentLang;
   renderDay();
 })();
-
-document.querySelector('.hero-scroll').addEventListener('click', function(e) {
-  e.preventDefault();
-  document.getElementById('gospel-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
 </script>
 
 </body>
