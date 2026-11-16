@@ -4,526 +4,694 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Daily Gospel for Kids">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#191a1a">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23191a1a'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='%23d97757'>📖</text></svg>">
+  <meta name="theme-color" content="#fbf4e6">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23fbf4e6'/><path d='M50 18v64M30 40h40' stroke='%23c6a15b' stroke-width='8' fill='none' stroke-linecap='round'/></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23fbf4e6'/><path d='M50 18v64M30 40h40' stroke='%23c6a15b' stroke-width='8' fill='none' stroke-linecap='round'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
   <title>Daily Gospel for Kids</title>
   <style>
     :root {
-      --accent: #d97757;
-      --accent-dim: #b8614a;
-      --accent-glow: rgba(217, 119, 87, 0.12);
-      --bg: #191a1a;
-      --bg-card: #1f2121;
-      --bg-header: #141515;
-      --bg-nav: #1b1c1c;
-      --bg-instruction: #232525;
-      --text: #e8e4de;
-      --text-secondary: #a8a29e;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(255, 255, 255, 0.14);
-      --shadow: rgba(0, 0, 0, 0.25);
+      --paper: #fbf4e6;
+      --paper-card: #fffdf8;
+      --ink: #3a2a22;
+      --ink-soft: #6d5648;
+      --gold: #c6a15b;
+      --gold-bright: #f3e6c4;
+      --gold-deep: #8c6b32;
+      --accent: #1f7a45;
+      --accent-dim: #186438;
+      --accent-glow: rgba(31, 122, 69, 0.14);
+      --accent-soft: rgba(31, 122, 69, 0.12);
+      --season: 47, 143, 91;
+      --shadow: 0 12px 28px rgba(90, 52, 20, 0.08);
+      --text: var(--ink);
+      --text-secondary: var(--ink-soft);
+      --border: rgba(140, 100, 50, 0.14);
+      --border-hover: rgba(140, 100, 50, 0.28);
     }
 
-    html { font-size: 129%; }
+    html { font-size: 112%; color-scheme: light; }
+    @media (min-width: 760px) { html { font-size: 122%; } }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    ::selection { background: rgba(217, 119, 87, 0.35); }
+    ::selection { background: rgba(198, 161, 91, 0.35); }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
+      font-family: 'Nunito', 'Trebuchet MS', 'Segoe UI', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Watercolor background */
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font-family: inherit; }
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid var(--gold-deep);
+      outline-offset: 3px;
+    }
+
+    [hidden] { display: none !important; }
+
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0);
+      white-space: nowrap; border: 0;
+    }
+
+    h1, h2, .day-number, .lang-btn, .read-btn, .stop-btn, .prayed-btn,
+    .card-header-title, .scripture-label-text, .scripture-reference,
+    .season-badge, .day-nav button, .nav-today, .wreath-label, .sticker-title,
+    .title-banner-liturgical {
+      font-family: 'Fredoka', 'Nunito', sans-serif;
+    }
+
+    /* Soft watercolor washes on cream paper */
     .watercolor-layer {
       position: fixed;
       inset: 0;
       z-index: -2;
       overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% -10%, rgba(255, 236, 206, 0.9), transparent 55%),
+        var(--paper);
+      pointer-events: none;
     }
 
     .watercolor-blob {
       position: absolute;
       border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.65;
+      filter: blur(80px);
+      opacity: 0.9;
       will-change: transform;
     }
 
     .blob-1 {
-      width: 55vmax;
-      height: 55vmax;
-      background: radial-gradient(circle, rgba(219, 160, 190, 0.8) 0%, rgba(219, 160, 190, 0) 70%);
-      top: -12%;
-      left: -10%;
-      animation: drift1 25s ease-in-out infinite alternate;
+      width: 52vmax; height: 52vmax;
+      background: radial-gradient(circle, rgba(255, 176, 120, 0.55) 0%, rgba(255, 176, 120, 0) 70%);
+      top: -18%; left: -16%;
+      animation: drift1 26s ease-in-out infinite alternate;
     }
-
     .blob-2 {
-      width: 50vmax;
-      height: 50vmax;
-      background: radial-gradient(circle, rgba(160, 180, 220, 0.8) 0%, rgba(160, 180, 220, 0) 70%);
-      top: 40%;
-      right: -15%;
+      width: 48vmax; height: 48vmax;
+      background: radial-gradient(circle, rgba(var(--season), 0.42) 0%, rgba(var(--season), 0) 70%);
+      top: -8%; right: -18%;
       animation: drift2 30s ease-in-out infinite alternate;
     }
-
     .blob-3 {
-      width: 48vmax;
-      height: 48vmax;
-      background: radial-gradient(circle, rgba(180, 210, 200, 0.8) 0%, rgba(180, 210, 200, 0) 70%);
-      bottom: -10%;
-      left: 20%;
+      width: 46vmax; height: 46vmax;
+      background: radial-gradient(circle, rgba(255, 214, 130, 0.55) 0%, rgba(255, 214, 130, 0) 70%);
+      bottom: -16%; left: 10%;
       animation: drift3 28s ease-in-out infinite alternate;
     }
-
     .blob-4 {
-      width: 42vmax;
-      height: 42vmax;
-      background: radial-gradient(circle, rgba(195, 175, 220, 0.75) 0%, rgba(195, 175, 220, 0) 70%);
-      top: 15%;
-      left: 50%;
+      width: 40vmax; height: 40vmax;
+      background: radial-gradient(circle, rgba(150, 196, 232, 0.4) 0%, rgba(150, 196, 232, 0) 70%);
+      top: 38%; left: 42%;
       animation: drift4 32s ease-in-out infinite alternate;
     }
 
     @keyframes drift1 {
       0%   { transform: translate(0, 0) scale(1); }
-      50%  { transform: translate(6vw, 8vh) scale(1.08); }
-      100% { transform: translate(-4vw, 5vh) scale(0.95); }
+      50%  { transform: translate(5vw, 6vh) scale(1.06); }
+      100% { transform: translate(-3vw, 4vh) scale(0.96); }
     }
-
     @keyframes drift2 {
       0%   { transform: translate(0, 0) scale(1); }
-      50%  { transform: translate(-7vw, -5vh) scale(1.05); }
-      100% { transform: translate(3vw, -8vh) scale(0.97); }
+      50%  { transform: translate(-6vw, -4vh) scale(1.05); }
+      100% { transform: translate(3vw, -6vh) scale(0.97); }
     }
-
     @keyframes drift3 {
       0%   { transform: translate(0, 0) scale(1); }
-      50%  { transform: translate(5vw, -6vh) scale(1.06); }
-      100% { transform: translate(-6vw, -3vh) scale(0.94); }
+      50%  { transform: translate(4vw, -5vh) scale(1.05); }
+      100% { transform: translate(-5vw, -2vh) scale(0.95); }
     }
-
     @keyframes drift4 {
       0%   { transform: translate(0, 0) scale(1); }
-      50%  { transform: translate(-5vw, 7vh) scale(1.04); }
-      100% { transform: translate(4vw, -4vh) scale(0.98); }
+      50%  { transform: translate(-4vw, 6vh) scale(1.04); }
+      100% { transform: translate(4vw, -3vh) scale(0.98); }
     }
 
-    /* Dark overlay to keep text readable */
-    .watercolor-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: rgba(25, 26, 26, 0.25);
-    }
-
-    /* Title Banner */
-    .title-banner {
+    .story-hero {
+      position: relative;
       text-align: center;
-      padding: 2.5rem 1.5rem 1.5rem;
+      padding: 4.35rem 1rem 0.35rem;
     }
 
-    .title-banner-icon { font-size: 1.8rem; display: block; margin-bottom: 0.6rem; opacity: 0.9; }
+    .title-cross {
+      color: var(--gold);
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.35rem;
+      filter: drop-shadow(0 6px 10px rgba(198, 161, 91, 0.35));
+    }
+    .title-cross svg {
+      width: 2.5rem;
+      height: 2.5rem;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.35;
+      stroke-linecap: round;
+    }
+    .title-rule {
+      width: 5.5rem;
+      height: 2px;
+      margin: 0.7rem auto 0;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      border: 0;
+    }
 
     .title-banner-title {
-      font-size: clamp(1.1rem, 4vw, 1.5rem);
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #fff;
-      margin-bottom: 0.4rem;
+      font-size: clamp(1.7rem, 6.4vw, 2.55rem);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: var(--ink);
+      line-height: 1.15;
+      margin-bottom: 0.2rem;
     }
 
     .title-banner-liturgical {
-      font-size: clamp(0.7rem, 2vw, 0.82rem);
-      font-weight: 500;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      font-weight: 600;
       color: var(--accent);
-      margin-bottom: 0.25rem;
-      letter-spacing: 0.04em;
+      margin-bottom: 0.15rem;
     }
 
     .title-banner-subtitle {
-      font-size: clamp(0.6rem, 1.8vw, 0.7rem);
-      font-weight: 300;
-      color: rgba(255, 255, 255, 0.5);
-      letter-spacing: 0.05em;
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(0.95rem, 2.8vw, 1.08rem);
+      font-weight: 700;
+      color: var(--ink-soft);
+      text-wrap: balance;
+      max-width: 18rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 0.4rem;
     }
 
-    /* Top bar: language toggle */
-    .top-bar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-bottom: 0.75rem;
-      position: sticky;
-      top: 0.75rem;
-      z-index: 99;
-    }
-
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.55rem 1.1rem;
-      background: rgba(27, 28, 28, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 0.01em;
-      transition: all 0.2s ease;
-    }
-
-    .back-link:hover {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    /* Language toggle */
     .lang-toggle {
+      position: absolute;
+      top: 0.85rem;
+      right: 0.15rem;
       display: flex;
-      background: rgba(27, 28, 28, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 100px;
+      background: #fffdf8;
+      border: 2px solid rgba(198, 161, 91, 0.55);
+      border-radius: 999px;
       overflow: hidden;
-      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 6px 16px rgba(90, 52, 20, 0.06);
+      z-index: 5;
     }
 
     .lang-btn {
       background: none;
       border: none;
-      color: var(--text-secondary);
-      font-size: 0.68rem;
-      font-weight: 500;
-      padding: 0.5rem 0.85rem;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+      font-weight: 600;
+      min-width: 3.1rem;
+      min-height: 2.7rem;
+      padding: 0.35rem 0.85rem;
       cursor: pointer;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      transition: all 0.2s ease;
-      letter-spacing: 0.02em;
-      position: relative;
+      letter-spacing: 0.04em;
     }
-
     .lang-btn.active {
       background: var(--accent);
       color: #fff;
     }
 
-    .lang-btn:not(.active):hover {
-      color: var(--accent);
-    }
-
-    /* Main */
     main {
-      max-width: 640px;
+      max-width: 740px;
       margin: 0 auto;
-      padding: 1.25rem 1.25rem 5rem;
+      padding: 0.4rem 1rem 2.5rem;
     }
 
-    /* Date header */
-    .date-header { text-align: center; margin-bottom: 1.5rem; }
+    .date-header { text-align: center; margin: 0.35rem 0 1rem; }
 
     .date-header .day-number {
-      font-size: 2.2rem;
-      font-weight: 700;
+      font-size: clamp(3rem, 12vw, 4.2rem);
+      font-weight: 600;
       color: var(--accent);
-      line-height: 1;
-      margin-bottom: 0.25rem;
+      line-height: 0.9;
+      margin-bottom: 0.2rem;
     }
 
     .date-header .day-details {
-      font-size: 0.78rem;
-      font-weight: 400;
-      color: var(--text-secondary);
-      letter-spacing: 0.04em;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink-soft);
     }
 
     .date-header .season-badge {
       display: inline-block;
-      font-size: 0.6rem;
+      font-size: 0.92rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.04em;
+      color: var(--accent-dim);
+      background: var(--accent-soft);
+      border-radius: 999px;
+      padding: 0.28rem 0.9rem;
+      margin-top: 0.55rem;
+    }
+
+    /* Advent wreath */
+    .advent-wreath {
+      text-align: center;
+      margin: 0.2rem auto 1rem;
+      max-width: 420px;
+    }
+    .wreath-label {
+      font-size: 1.05rem;
+      font-weight: 600;
       color: var(--accent);
-      border: 1px solid var(--accent);
-      border-radius: 100px;
-      padding: 0.2rem 0.7rem;
-      margin-top: 0.6rem;
-      opacity: 0.85;
+      margin-bottom: 0.15rem;
+    }
+    .wreath-svg { width: min(100%, 380px); height: auto; display: block; margin: 0 auto; }
+    .candle .flame, .candle .flame-core { opacity: 0; }
+    .candle.lit .flame, .candle.lit .flame-core {
+      opacity: 1;
+      transform-box: fill-box;
+      transform-origin: center bottom;
+      animation: flicker 1.15s ease-in-out infinite;
+    }
+    .candle.rose .wax { fill: #e7a0b8; }
+    .candle.rose .wax-band { fill: rgba(255, 255, 255, 0.35); }
+    @keyframes flicker {
+      0%, 100% { transform: scale(1) translateY(0); }
+      50% { transform: scale(0.9, 1.08) translateY(0.6px); }
     }
 
-    /* Scripture card */
-    .scripture-card {
-      background: rgba(31, 33, 33, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+    /* Story illustration */
+    .story-art {
+      margin: 0.2rem auto 1.1rem;
+      background: #fffdf8;
+      border-radius: 28px;
+      padding: 0.55rem 0.55rem 0.45rem;
+      box-shadow: var(--shadow), 0 0 0 3px rgba(198, 161, 91, 0.38);
       overflow: hidden;
-      margin-bottom: 1.25rem;
-      transition: border-color 0.2s ease;
+    }
+    .story-art img {
+      width: 100%;
+      height: 340px;
+      object-fit: contain;
+      object-position: center center;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(var(--season), 0.16), transparent 72%),
+        #f6ead6;
+      display: block;
+    }
+    .story-art figcaption {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--ink-soft);
+      text-align: center;
+      padding: 0.4rem 0.4rem 0.15rem;
+    }
+    .art-fallback { display: none; }
+    .story-art.art-missing img { display: none; }
+    .story-art.art-missing figcaption { display: none; }
+    .story-art.art-missing .art-fallback { display: block; }
+    .art-fallback svg {
+      width: 100%;
+      height: 340px;
+      display: block;
+      border-radius: 22px;
     }
 
-    .scripture-card:hover { border-color: var(--border-hover); }
-
-    .scripture-label {
+    /* Read aloud */
+    .read-row {
+      display: flex;
+      gap: 0.6rem;
+      align-items: stretch;
+      margin: 0 0 1.15rem;
+    }
+    .read-btn, .stop-btn, .prayed-btn, .day-nav button {
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .read-btn {
+      flex: 1;
+      min-height: 4.4rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-dim));
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      padding: 1.1rem 1.5rem 0;
+      justify-content: center;
+      gap: 0.7rem;
+      box-shadow: 0 7px 0 var(--accent-dim), 0 12px 22px rgba(90, 52, 20, 0.1);
+      padding: 0.6rem 1.2rem;
+    }
+    .read-btn:active { transform: translateY(3px); box-shadow: 0 4px 0 var(--accent-dim); }
+    .read-btn svg { width: 1.7rem; height: 1.7rem; flex-shrink: 0; }
+    .read-btn .icon-pause { display: none; }
+    .read-row.is-playing .icon-play { display: none; }
+    .read-row.is-playing .icon-pause { display: block; }
+    .stop-btn {
+      min-width: 5.2rem;
+      border-radius: 22px;
+      border: 2px solid rgba(192, 57, 43, 0.35);
+      background: #fff;
+      color: #a33b32;
+      font-family: 'Fredoka', 'Nunito', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      box-shadow: 0 5px 0 rgba(192, 57, 43, 0.18);
+    }
+    .stop-btn:active { transform: translateY(2px); }
+
+    /* Cards */
+    .story-card {
+      background: var(--paper-card);
+      border: 2px solid rgba(198, 161, 91, 0.38);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .story-card:active { transform: scale(0.992); }
+    .gospel-card { border-top: 8px solid var(--accent); }
+    .meaning-card { background: linear-gradient(180deg, #fff8e4, #fffdf8); }
+    .talk-card { background: linear-gradient(180deg, #f2f8fd, #fffdfe); }
+    .prayer-card { background: linear-gradient(180deg, #fff1f0, #fffdfb); }
+    .sticker-card {
+      background: linear-gradient(180deg, #fff8ea, #fffdf8);
+      position: relative;
+      margin-top: 1.15rem;
     }
 
-    .scripture-label-icon { font-size: 1.2rem; line-height: 1; }
+    .icon-badge {
+      width: 3.35rem;
+      height: 3.35rem;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .icon-badge svg { width: 1.85rem; height: 1.85rem; display: block; }
+    .gospel-badge { background: var(--accent-soft); color: var(--accent); }
+    .gospel-badge svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+    .meaning-badge { background: #ffe39a; }
+    .talk-badge { background: #d4efff; }
+    .prayer-badge { background: #ffd5d0; }
+    .sticker-badge { background: #ffe39a; }
 
-    .scripture-label-text {
-      font-size: 0.62rem;
+    .scripture-label, .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 1rem 1.1rem 0.75rem;
+    }
+    .card-header { border-bottom: 2px dashed rgba(90, 55, 20, 0.1); }
+
+    .scripture-label-text, .card-header-title, .sticker-title {
+      font-size: 1.18rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
+      color: var(--ink);
+      letter-spacing: 0.01em;
     }
 
     .scripture-reference {
-      padding: 0.5rem 1.5rem 0;
-      font-size: 1.05rem;
-      font-weight: 500;
-      color: var(--text);
-      line-height: 1.3;
+      padding: 0.15rem 1.2rem 0;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--accent);
+      line-height: 1.25;
     }
 
-    .scripture-body { padding: 1rem 1.5rem 1.5rem; }
+    .scripture-body { padding: 0.75rem 1.15rem 1.2rem; }
 
     .scripture-text {
-      font-size: 1.05rem;
-      font-weight: 300;
-      line-height: 1.9;
-      color: rgba(232, 228, 222, 0.92);
-      font-style: italic;
-      border-left: 3px solid var(--accent-dim);
-      padding-left: 1.15rem;
-      margin: 0.75rem 0;
+      font-size: 1.32rem;
+      font-weight: 700;
+      line-height: 1.55;
+      color: var(--ink);
+      font-style: normal;
+      border-left: 6px solid var(--accent);
+      background: rgba(var(--season), 0.09);
+      border-radius: 0 18px 18px 0;
+      padding: 0.85rem 1rem 0.85rem 1.05rem;
+      margin: 0.45rem 0 0;
     }
 
-    /* Explanation card */
-    .explanation-card {
-      background: rgba(31, 33, 33, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 1.25rem;
-      transition: border-color 0.2s ease;
-    }
-
-    .explanation-card:hover { border-color: var(--border-hover); }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      padding: 1.1rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .card-header-icon { font-size: 1.3rem; line-height: 1; }
-
-    .card-header-title {
-      font-size: 0.62rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-    }
-
-    .card-body { padding: 1.15rem 1.5rem 1.5rem; }
-
-    .card-body p {
-      font-size: 0.92rem;
-      font-weight: 300;
-      line-height: 1.85;
-      color: rgba(232, 228, 222, 0.85);
+    .card-body { padding: 0.95rem 1.15rem 1.2rem; }
+    .card-body p, .questions-list li, .family-prayer p {
+      font-size: 1.16rem;
+      font-weight: 700;
+      line-height: 1.6;
+      color: var(--ink);
     }
 
     .questions-list { list-style: none; padding: 0; }
-
     .questions-list li {
-      font-size: 0.92rem;
-      font-weight: 300;
-      line-height: 1.75;
-      color: rgba(232, 228, 222, 0.85);
       padding: 0.85rem 0;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 2px dashed rgba(90, 55, 20, 0.1);
       display: flex;
-      gap: 0.8rem;
+      gap: 0.75rem;
       align-items: flex-start;
     }
-
     .questions-list li:last-child { border-bottom: none; padding-bottom: 0; }
-
     .question-number {
       flex-shrink: 0;
-      width: 1.6rem;
-      height: 1.6rem;
+      width: 2.15rem;
+      height: 2.15rem;
       border-radius: 50%;
-      background: var(--accent-glow);
-      border: 1px solid var(--accent-dim);
+      background: #d7f0ff;
+      color: #1a6f9c;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.65rem;
+      font-family: 'Fredoka', 'Nunito', sans-serif;
+      font-size: 1rem;
       font-weight: 600;
-      color: var(--accent);
-      margin-top: 0.15rem;
+      margin-top: 0.12rem;
     }
 
     .family-prayer {
-      background: rgba(35, 37, 37, 0.7);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin-top: 0.5rem;
+      background: rgba(255, 255, 255, 0.72);
+      border-radius: 18px;
+      padding: 1rem 1.05rem;
     }
-
-    .family-prayer p {
-      font-size: 0.85rem;
-      font-weight: 300;
-      line-height: 1.8;
-      color: rgba(232, 228, 222, 0.8);
-      text-align: center;
-    }
-
-    .day-nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1.5rem;
-      margin: 2rem 0 1rem;
-    }
-
-    .day-nav button {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      font-size: 0.72rem;
-      font-weight: 500;
-      padding: 0.45rem 1.1rem;
-      border-radius: 100px;
-      cursor: pointer;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      transition: all 0.2s ease;
-      letter-spacing: 0.02em;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .day-nav button:hover { border-color: var(--accent); color: var(--accent); }
-
-    .day-nav .nav-today {
-      font-size: 0.62rem;
-      color: var(--accent);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    footer {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-secondary);
-      font-size: 0.72rem;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      border-top: 1px solid var(--border);
-      background: rgba(20, 21, 21, 0.6);
-    }
-
-    footer a { color: var(--accent); text-decoration: none; transition: opacity 0.2s ease; }
-    footer a:hover { opacity: 0.75; }
+    .family-prayer p { text-align: center; font-weight: 700; }
 
     .section-divider {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      margin: 2rem 0 1rem;
-      padding: 0 0.25rem;
+      gap: 0.8rem;
+      margin: 1.25rem 0 0.75rem;
     }
-
-    .section-divider::before,
-    .section-divider::after {
+    .section-divider::before, .section-divider::after {
       content: '';
       flex: 1;
-      height: 1px;
-      background: var(--border);
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(198, 161, 91, 0.7), transparent);
     }
-
     .section-divider h2 {
-      font-size: 0.68rem;
+      font-size: 1.15rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: var(--accent);
+      color: var(--gold-deep);
       white-space: nowrap;
     }
+
+    /* Sticker chart */
+    .sticker-board {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.28rem;
+      padding: 0.85rem 0.7rem 0.3rem;
+    }
+    .sticker-day {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.18rem;
+    }
+    .sticker-slot {
+      width: 2.15rem;
+      height: 2.15rem;
+      border-radius: 50%;
+      border: 2px dashed #e4d0ae;
+      background: #fff;
+      display: grid;
+      place-items: center;
+    }
+    .sticker-day.earned .sticker-slot {
+      border-style: solid;
+      border-color: #e0b44a;
+      background: radial-gradient(circle at 35% 30%, #fff8dc, #ffe39a 70%);
+    }
+    .sticker-day.is-today .sticker-slot {
+      box-shadow: 0 0 0 3px var(--accent);
+    }
+    .sticker-star svg { width: 1.2rem; height: 1.2rem; display: block; }
+    .sticker-dow {
+      font-family: 'Fredoka', 'Nunito', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--ink-soft);
+    }
+    .sticker-day.just-earned .sticker-star { animation: star-pop 0.55s cubic-bezier(.2, 1.4, .4, 1); }
+    @keyframes star-pop {
+      0% { transform: scale(0) rotate(-18deg); }
+      70% { transform: scale(1.25) rotate(8deg); }
+      100% { transform: scale(1) rotate(0); }
+    }
+    .star-burst { position: absolute; left: 50%; top: 0.9rem; width: 0; height: 0; pointer-events: none; }
+    .star-burst i {
+      position: absolute;
+      width: 8px; height: 8px;
+      margin: -4px 0 0 -4px;
+      background: #f0c14a;
+      clip-path: polygon(50% 0, 62% 38%, 100% 38%, 69% 59%, 82% 100%, 50% 74%, 18% 100%, 31% 59%, 0 38%, 38% 38%);
+      animation: burst 680ms ease-out forwards;
+    }
+    @keyframes burst {
+      to { transform: translate(var(--dx), var(--dy)) scale(0.25); opacity: 0; }
+    }
+
+    .prayed-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      width: calc(100% - 1.5rem);
+      margin: 0.75rem auto 1.1rem;
+      min-height: 4rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffe7a0, #f0c14a);
+      color: #5c3e12;
+      font-size: 1.25rem;
+      font-weight: 600;
+      box-shadow: 0 7px 0 #d09a2e;
+    }
+    .prayed-btn svg { width: 1.45rem; height: 1.45rem; }
+    .prayed-btn:active { transform: translateY(3px); box-shadow: 0 4px 0 #d09a2e; }
+    .prayed-btn.is-done {
+      background: linear-gradient(180deg, #fff6d4, #ffe29a);
+    }
+    .prayed-btn.is-done svg path { fill: #e0a82e; }
+    .prayed-btn.wiggle { animation: wiggle 0.4s ease; }
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0); }
+      30% { transform: rotate(-2.5deg); }
+      70% { transform: rotate(2.5deg); }
+    }
+
+    .day-nav {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 1.35rem 0 0.4rem;
+    }
+    .day-nav button {
+      background: #fffdf8;
+      border: 2px solid rgba(198, 161, 91, 0.55);
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 600;
+      min-height: 2.9rem;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    #btn-prev { justify-self: start; }
+    #btn-next { justify-self: end; }
+    .day-nav button:active { transform: translateY(1px); }
+    .day-nav .nav-today {
+      font-size: 0.95rem;
+      color: var(--accent);
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.6rem 1rem 2.2rem;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+      font-weight: 700;
+      border-top: 2px solid rgba(198, 161, 91, 0.35);
+      background: rgba(255, 253, 248, 0.55);
+    }
+    footer a { color: var(--gold-deep); font-weight: 800; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
 
     .fade-content { transition: opacity 0.25s ease; }
     .fade-content.fading { opacity: 0; }
 
-    @media (max-width: 480px) {
-      main { padding: 0.75rem 0.75rem 3rem; }
-      .scripture-body { padding: 0.85rem 1.15rem 1.25rem; }
-      .scripture-text { font-size: 0.98rem; padding-left: 1rem; }
-      .scripture-label { padding: 1rem 1.15rem 0; }
-      .scripture-reference { padding: 0.5rem 1.15rem 0; font-size: 0.98rem; }
-      .card-header { padding: 1rem 1.15rem; }
-      .card-body { padding: 1rem 1.15rem 1.25rem; }
-      .date-header .day-number { font-size: 1.8rem; }
-      .lang-btn { font-size: 0.65rem; padding: 0.45rem 0.7rem; }
-      .back-link { font-size: 0.68rem; padding: 0.45rem 0.85rem; }
+    @media (min-width: 760px) {
+      main {
+        background: rgba(255, 253, 248, 0.55);
+        border: 1px solid rgba(198, 161, 91, 0.28);
+        border-radius: 36px;
+        margin-top: 1.25rem;
+        margin-bottom: 1.5rem;
+        padding: 0.4rem 1.75rem 2.4rem;
+        box-shadow: 0 18px 50px rgba(90, 52, 20, 0.06);
+      }
+      .story-art img, .art-fallback svg { height: 420px; }
+      .sticker-slot { width: 2.8rem; height: 2.8rem; }
+      .sticker-star svg { width: 1.5rem; height: 1.5rem; }
+      .sticker-dow { font-size: 0.85rem; }
+      .lang-toggle { right: 0.4rem; top: 1rem; }
     }
+
+    @media (max-width: 380px) {
+      main { padding-left: 0.7rem; padding-right: 0.7rem; }
+      .scripture-text { font-size: 1.22rem; }
+      .read-btn { font-size: 1.18rem; }
+      .sticker-slot { width: 1.95rem; height: 1.95rem; }
+      .sticker-dow { font-size: 0.65rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .watercolor-blob, .candle.lit .flame, .candle.lit .flame-core,
+      .sticker-day.just-earned .sticker-star, .star-burst i, .prayed-btn.wiggle,
+      .fade-content { animation: none !important; transition: none !important; }
+    }
+
   </style>
 </head>
 <body>
 
-<div class="watercolor-layer">
+<div class="watercolor-layer" aria-hidden="true">
   <div class="watercolor-blob blob-1"></div>
   <div class="watercolor-blob blob-2"></div>
   <div class="watercolor-blob blob-3"></div>
   <div class="watercolor-blob blob-4"></div>
 </div>
-<div class="watercolor-overlay"></div>
 
 <main>
-  <div class="title-banner">
-    <span class="title-banner-icon">📖</span>
+  <header class="story-hero">
+    <div class="lang-toggle">
+      <button type="button" class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button type="button" class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+    </div>
+    <div class="title-cross" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 3.2v17.6"/><path d="M6.2 8.4h11.6"/></svg>
+    </div>
     <h1 class="title-banner-title" id="hero-title">Daily Gospel for Kids</h1>
     <p class="title-banner-liturgical" id="liturgical-day-label"></p>
     <p class="title-banner-subtitle" id="hero-subtitle">Let the children come to me — Matthew 19:14</p>
-  </div>
-
-  <div class="top-bar">
-    <div class="lang-toggle">
-      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
-    </div>
-  </div>
+    <div class="title-rule" aria-hidden="true"></div>
+  </header>
 
   <div id="gospel-content" class="fade-content">
     <div class="date-header">
@@ -532,55 +700,169 @@
       <div class="season-badge" id="season-badge"></div>
     </div>
 
-    <div class="scripture-card">
+    <div class="advent-wreath" id="advent-wreath" hidden>
+      <p class="wreath-label" id="wreath-label"></p>
+      <svg class="wreath-svg" viewBox="0 0 360 168" aria-hidden="true">
+        <ellipse cx="180" cy="112" rx="132" ry="40" fill="none" stroke="#217246" stroke-width="26"/>
+        <ellipse cx="180" cy="112" rx="132" ry="40" fill="none" stroke="#3e9a5c" stroke-width="12"/>
+        <ellipse cx="180" cy="112" rx="132" ry="40" fill="none" stroke="#1b5c38" stroke-width="2" stroke-dasharray="3 14" opacity="0.45"/>
+        <circle cx="86" cy="96" r="5" fill="#c4474a"/>
+        <circle cx="124" cy="132" r="4.5" fill="#d4564e"/>
+        <circle cx="250" cy="138" r="5" fill="#c4474a"/>
+        <circle cx="292" cy="100" r="4.5" fill="#d4564e"/>
+        <circle cx="180" cy="146" r="4" fill="#b83b3b"/>
+        <g class="candle" data-n="1" transform="translate(78,40)">
+          <rect class="wax" x="-9" y="28" width="18" height="50" rx="4" fill="#6d3fa8"/>
+          <rect class="wax-band" x="-9" y="36" width="18" height="6" fill="rgba(255,255,255,0.28)"/>
+          <rect x="-1.2" y="18" width="2.4" height="12" rx="1" fill="#5c4636"/>
+          <ellipse class="flame" cx="0" cy="10" rx="7" ry="10" fill="#ffcc4d"/>
+          <ellipse class="flame-core" cx="0" cy="12" rx="3.2" ry="5.5" fill="#fff6cf"/>
+        </g>
+        <g class="candle" data-n="2" transform="translate(132,28)">
+          <rect class="wax" x="-9" y="28" width="18" height="50" rx="4" fill="#6d3fa8"/>
+          <rect class="wax-band" x="-9" y="36" width="18" height="6" fill="rgba(255,255,255,0.28)"/>
+          <rect x="-1.2" y="18" width="2.4" height="12" rx="1" fill="#5c4636"/>
+          <ellipse class="flame" cx="0" cy="10" rx="7" ry="10" fill="#ffcc4d"/>
+          <ellipse class="flame-core" cx="0" cy="12" rx="3.2" ry="5.5" fill="#fff6cf"/>
+        </g>
+        <g class="candle rose" data-n="3" transform="translate(228,28)">
+          <rect class="wax" x="-9" y="28" width="18" height="50" rx="4" fill="#e7a0b8"/>
+          <rect class="wax-band" x="-9" y="36" width="18" height="6" fill="rgba(255,255,255,0.4)"/>
+          <rect x="-1.2" y="18" width="2.4" height="12" rx="1" fill="#5c4636"/>
+          <ellipse class="flame" cx="0" cy="10" rx="7" ry="10" fill="#ffcc4d"/>
+          <ellipse class="flame-core" cx="0" cy="12" rx="3.2" ry="5.5" fill="#fff6cf"/>
+        </g>
+        <g class="candle" data-n="4" transform="translate(282,40)">
+          <rect class="wax" x="-9" y="28" width="18" height="50" rx="4" fill="#6d3fa8"/>
+          <rect class="wax-band" x="-9" y="36" width="18" height="6" fill="rgba(255,255,255,0.28)"/>
+          <rect x="-1.2" y="18" width="2.4" height="12" rx="1" fill="#5c4636"/>
+          <ellipse class="flame" cx="0" cy="10" rx="7" ry="10" fill="#ffcc4d"/>
+          <ellipse class="flame-core" cx="0" cy="12" rx="3.2" ry="5.5" fill="#fff6cf"/>
+        </g>
+      </svg>
+    </div>
+
+    <figure class="story-art" id="story-art">
+      <img id="story-img" alt="" decoding="async" referrerpolicy="no-referrer">
+      <div class="art-fallback" aria-hidden="true">
+        <svg viewBox="0 0 640 360">
+          <rect width="640" height="360" fill="#f6e2c4"/>
+          <circle cx="530" cy="68" r="38" fill="#ffd56a"/>
+          <path d="M0 250C120 210 220 230 320 246c100 16 200-10 320-28v142H0Z" fill="#8ecf8a"/>
+          <path d="M0 292c140-40 250-10 380 8 90 12 170-6 260-20v80H0Z" fill="#5eaf68"/>
+          <g transform="translate(150,148)" fill="#fffaf2" stroke="#c6a15b" stroke-width="3">
+            <path d="M170 18C110 4 50 10 0 28v92c52-16 112-10 170 8V18z"/>
+            <path d="M170 18c60-14 120-8 170 10v92c-52-16-112-22-170-8V18z"/>
+          </g>
+          <path d="M320 42v40M306 56h28" fill="none" stroke="#c6a15b" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <figcaption id="story-credit"></figcaption>
+    </figure>
+
+    <div class="read-row" id="read-aloud" hidden>
+      <button type="button" class="read-btn" id="btn-read">
+        <svg class="icon-play" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="20" fill="rgba(255,255,255,0.18)"/>
+          <path fill="#fff" d="M19 15.5v17l15-8.5z"/>
+        </svg>
+        <svg class="icon-pause" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="20" fill="rgba(255,255,255,0.18)"/>
+          <path fill="#fff" d="M17 15h5.5v18H17zM25.5 15H31v18h-5.5z"/>
+        </svg>
+        <span id="lbl-read">Read it to me</span>
+      </button>
+      <button type="button" class="stop-btn" id="btn-stop" hidden>
+        <span id="lbl-stop">Stop</span>
+      </button>
+    </div>
+
+    <article class="story-card gospel-card">
       <div class="scripture-label">
-        <span class="scripture-label-icon">✝&#xFE0E;</span>
+        <span class="icon-badge gospel-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3.2v17.6"/><path d="M6.2 8.4h11.6"/></svg>
+        </span>
         <span class="scripture-label-text" id="lbl-gospel">Today's Gospel</span>
       </div>
       <div class="scripture-reference" id="scripture-ref"></div>
       <div class="scripture-body">
         <p class="scripture-text" id="scripture-text"></p>
       </div>
-    </div>
+    </article>
 
-    <div class="explanation-card">
+    <article class="story-card meaning-card">
       <div class="card-header">
-        <span class="card-header-icon">💡</span>
+        <span class="icon-badge meaning-badge" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <path fill="#FFE08A" stroke="#E09B00" stroke-width="2.2" stroke-linejoin="round" d="M24 7a11 11 0 0 0-6.2 20.1c.8.7 1.5 1.9 1.5 3.1V33h9.4v-2.8c0-1.2.7-2.4 1.5-3.1A11 11 0 0 0 24 7z"/>
+            <path stroke="#E09B00" stroke-width="2.2" stroke-linecap="round" d="M20 36.5h8M21.2 40h5.6"/>
+            <path stroke="#F0B429" stroke-width="2.2" stroke-linecap="round" d="M24 13.5v3.5M16.5 16.2l-2.2-2.2M31.5 16.2l2.2-2.2"/>
+          </svg>
+        </span>
         <span class="card-header-title" id="lbl-meaning">What This Means</span>
       </div>
       <div class="card-body">
         <p id="explanation-text"></p>
       </div>
-    </div>
+    </article>
 
-    <div class="explanation-card">
+    <article class="story-card talk-card">
       <div class="card-header">
-        <span class="card-header-icon">💬</span>
+        <span class="icon-badge talk-badge" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <path fill="#7EC8F0" d="M7 12h20a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6H18l-6 6v-6H7a6 6 0 0 1-6-6v-8a6 6 0 0 1 6-6z"/>
+            <path fill="#fff" stroke="#3a98c9" stroke-width="1.6" d="M18 14h18a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6H28l-5 5v-5h-5a6 6 0 0 1-6-6v-8a6 6 0 0 1 6-6z"/>
+          </svg>
+        </span>
         <span class="card-header-title" id="lbl-discuss">Let's Talk About It</span>
       </div>
       <div class="card-body">
         <ul class="questions-list" id="questions-list"></ul>
       </div>
-    </div>
+    </article>
 
     <div class="section-divider">
       <h2 id="lbl-prayer-divider">Family Prayer</h2>
     </div>
 
-    <div class="explanation-card">
+    <article class="story-card prayer-card">
       <div class="card-header">
-        <span class="card-header-icon">🙏</span>
+        <span class="icon-badge prayer-badge" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <path fill="#F4B4C4" d="M24 42S10 33.2 10 23.2A8.2 8.2 0 0 1 24 18a8.2 8.2 0 0 1 14 5.2C38 33.2 24 42 24 42z"/>
+            <path stroke="#C6A15B" stroke-width="2.5" stroke-linecap="round" d="M24 18.5v12.5M17.8 24.8h12.4"/>
+          </svg>
+        </span>
         <span class="card-header-title" id="lbl-pray">Pray Together</span>
       </div>
       <div class="card-body">
         <div class="family-prayer" id="family-prayer"></div>
       </div>
-    </div>
+    </article>
+
+    <section class="story-card sticker-card" id="sticker-card">
+      <div class="card-header">
+        <span class="icon-badge sticker-badge" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <path fill="#F0C14A" stroke="#C8922A" stroke-width="1.6" d="M24 4l5.2 11.2L41 17l-8.6 8 2.2 12.2L24 31.2 13.4 37.2 15.6 25 7 17l11.8-1.8z"/>
+          </svg>
+        </span>
+        <span class="card-header-title sticker-title" id="lbl-sticker">Our prayer stars</span>
+      </div>
+      <div class="sticker-board" id="sticker-board"></div>
+      <button type="button" class="prayed-btn" id="btn-prayed">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#fff" stroke="#C8922A" stroke-width="2" d="M24 6l4.8 10.6L40 18.2l-8 7.6 2 11.4L24 31.4 14 37.2l2-11.4-8-7.6 11.2-1.6z"/>
+        </svg>
+        <span id="lbl-prayed">We prayed today!</span>
+      </button>
+      <p id="sticker-status" class="visually-hidden" aria-live="polite"></p>
+    </section>
 
     <div class="day-nav">
-      <button onclick="changeDay(-1)" id="btn-prev">← Yesterday</button>
+      <button type="button" onclick="changeDay(-1)" id="btn-prev">← Yesterday</button>
       <span class="nav-today" id="nav-today-label">Today</span>
-      <button onclick="changeDay(1)" id="btn-next">Tomorrow →</button>
+      <button type="button" onclick="changeDay(1)" id="btn-next">Tomorrow →</button>
     </div>
   </div>
 </main>
@@ -591,6 +873,7 @@
 </footer>
 
 <script>
+
 // ═══════════════════════════════════════════════════════════════
 // UI LABELS
 // ═══════════════════════════════════════════════════════════════
@@ -612,6 +895,17 @@ var ui = {
     tomorrow: "Tomorrow",
     months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
     days: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+    read: "Read it to me",
+    pause: "Pause",
+    resume: "Keep reading",
+    stop: "Stop",
+    prayed: "We prayed today!",
+    stickerTitle: "Our prayer stars",
+    wreathLabel: "Advent wreath",
+    weekWord: "Week",
+    artAlt: "Picture for today's Gospel",
+    starAdded: "A star for today!",
+    weekShort: ['Su','Mo','Tu','We','Th','Fr','Sa'],
     seasonNames: { advent:'Advent', christmas:'Christmas', lent:'Lent', passion:'Holy Week', easter:'Easter', ordinary:'Ordinary Time' }
   },
   es: {
@@ -631,6 +925,17 @@ var ui = {
     tomorrow: "Ma\u00f1ana",
     months: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
     days: ['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'],
+    read: "\u00a1L\u00e9emelo!",
+    pause: "Pausa",
+    resume: "Sigue leyendo",
+    stop: "Detener",
+    prayed: "\u00a1Ya rezamos hoy!",
+    stickerTitle: "Estrellas de oraci\u00f3n",
+    wreathLabel: "Corona de Adviento",
+    weekWord: "Semana",
+    artAlt: "Imagen para el Evangelio de hoy",
+    starAdded: "\u00a1Una estrella para hoy!",
+    weekShort: ['Do','Lu','Ma','Mi','Ju','Vi','S\u00e1'],
     seasonNames: { advent:'Adviento', christmas:'Navidad', lent:'Cuaresma', passion:'Semana Santa', easter:'Pascua', ordinary:'Tiempo Ordinario' }
   }
 };
@@ -1502,6 +1807,472 @@ var passages_es = [
 ];
 
 // ═══════════════════════════════════════════════════════════════
+// STORYBOOK EXTRAS — pictures, read-aloud, stickers, wreath
+// Passage text and the season calendar below are unchanged.
+// ═══════════════════════════════════════════════════════════════
+var ART = {
+  children: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Let_the_Little_Children_Come_unto_Jesus.jpg/960px-Let_the_Little_Children_Come_unto_Jesus.jpg', credit: 'Carl Bloch', pos: 'center 28%' },
+  children2: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Carl_Heinrich_Bloch_-_Suffer_the_Children.jpg/960px-Carl_Heinrich_Bloch_-_Suffer_the_Children.jpg', credit: 'Carl Bloch', pos: 'center 22%' },
+  children3: { src: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Nicolaes_Maes_-_Christ_Blessing_the_Children_-_WGA13814.jpg', credit: 'Nicolaes Maes', pos: 'center 35%' },
+  storm: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Eug%C3%A8ne_Delacroix_-_Christ_on_the_Sea_of_Galilee_-_Walters_37186.jpg/960px-Eug%C3%A8ne_Delacroix_-_Christ_on_the_Sea_of_Galilee_-_Walters_37186.jpg', credit: 'Eugène Delacroix', pos: 'center center' },
+  storm2: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Rembrandt_Christ_in_the_Storm_on_the_Lake_of_Galilee.jpg/960px-Rembrandt_Christ_in_the_Storm_on_the_Lake_of_Galilee.jpg', credit: 'Rembrandt', pos: 'center 40%' },
+  loaves: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/John_Martin_-_Feeding_the_Five_Thousand_-_B1977.14.4260_-_Yale_Center_for_British_Art.jpg/960px-John_Martin_-_Feeding_the_Five_Thousand_-_B1977.14.4260_-_Yale_Center_for_British_Art.jpg', credit: 'John Martin', pos: 'center 45%' },
+  sower: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Jean-Fran%C3%A7ois_Millet_-_The_Sower_-_Google_Art_Project.jpg/960px-Jean-Fran%C3%A7ois_Millet_-_The_Sower_-_Google_Art_Project.jpg', credit: 'Jean-François Millet', pos: 'center center' },
+  shepherd: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Bernhard_Plockhorst_-_Good_Shephard.jpg/960px-Bernhard_Plockhorst_-_Good_Shephard.jpg', credit: 'Bernhard Plockhorst', pos: 'center 18%' },
+  shepherd2: { src: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Brooklyn_Museum_-_The_Good_Shepherd_%28Le_bon_pasteur%29_-_James_Tissot_-_overall.jpg', credit: 'James Tissot', pos: 'center 30%' },
+  light: { src: 'https://upload.wikimedia.org/wikipedia/commons/1/10/Hunt_Light_of_the_World.jpg', credit: 'William Holman Hunt', pos: 'center 12%' },
+  birds: { src: 'https://upload.wikimedia.org/wikipedia/commons/5/52/Albert_Joseph_Moore_%281841-1893%29_-_Birds_of_the_Air_-_1934.414_-_Manchester_Art_Gallery.jpg', credit: 'Albert Joseph Moore', pos: 'center 30%' },
+  samaritan: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Jacob_Jordaens_-_The_Good_Samaritan_%28Podhorce%29.jpg/960px-Jacob_Jordaens_-_The_Good_Samaritan_%28Podhorce%29.jpg', credit: 'Jacob Jordaens', pos: 'center 40%' },
+  zacchaeus: { src: 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Brooklyn_Museum_-_Zacchaeus_in_the_Sycamore_Awaiting_the_Passage_of_Jesus_%28Zach%C3%A9e_sur_le_sycomore_attendant_le_passage_de_J%C3%A9sus%29_-_James_Tissot.jpg', credit: 'James Tissot', pos: 'center 15%' },
+  nativity: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Gerard_van_Honthorst_-_Adoration_of_the_Child_-_WGA11655.jpg/960px-Gerard_van_Honthorst_-_Adoration_of_the_Child_-_WGA11655.jpg', credit: 'Gerard van Honthorst', pos: 'center 45%' },
+  magi: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Fra_Angelico%2C_Fra_Filippo_Lippi%2C_The_Adoration_of_the_Magi.jpg/960px-Fra_Angelico%2C_Fra_Filippo_Lippi%2C_The_Adoration_of_the_Magi.jpg', credit: 'Fra Angelico and Fra Filippo Lippi', pos: 'center 55%' },
+  wept: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Brooklyn_Museum_-_Jesus_Wept_%28J%C3%A9sus_pleura%29_-_James_Tissot.jpg/960px-Brooklyn_Museum_-_Jesus_Wept_%28J%C3%A9sus_pleura%29_-_James_Tissot.jpg', credit: 'James Tissot', pos: 'center 35%' },
+  sermon: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Bloch-SermonOnTheMount.jpg/960px-Bloch-SermonOnTheMount.jpg', credit: 'Carl Bloch', pos: 'center 28%' },
+  water: { src: 'https://upload.wikimedia.org/wikipedia/commons/f/f9/Brooklyn_Museum_-_Jesus_Walks_on_the_Sea_%28J%C3%A9sus_marche_sur_la_mer%29_-_James_Tissot_-_overall.jpg', credit: 'James Tissot', pos: 'center 30%' },
+  jairus: { src: 'https://upload.wikimedia.org/wikipedia/commons/8/8d/THE_RAISING_OF_THE_DAUGHTER_OF_JAIRUS.jpg', credit: 'Heinrich Hofmann', pos: 'center 25%' },
+  fish: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Raphael_-_The_Miraculous_Draft_of_Fishes_-_Google_Art_Project.jpg/960px-Raphael_-_The_Miraculous_Draft_of_Fishes_-_Google_Art_Project.jpg', credit: 'Raphael', pos: 'center 55%' },
+  fish2: { src: 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Brooklyn_Museum_-_The_Miraculous_Draught_of_Fishes_%28La_p%C3%AAche_miraculeuse%29_-_James_Tissot_-_overall.jpg', credit: 'James Tissot', pos: 'center 40%' },
+  coin: { src: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Domenico_Fetti_-_Parable_of_the_Lost_Drachma_-_WGA07857.jpg', credit: 'Domenico Fetti', pos: 'center 20%' },
+  prodigal: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Rembrandt_Harmensz_van_Rijn_-_Return_of_the_Prodigal_Son_-_Google_Art_Project.jpg/960px-Rembrandt_Harmensz_van_Rijn_-_Return_of_the_Prodigal_Son_-_Google_Art_Project.jpg', credit: 'Rembrandt', pos: 'center 28%' },
+  vine: { src: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/Christ_the_True_Vine_icon_%28Athens%2C_16th_century%29.jpg', credit: '16th century icon', pos: 'center center' },
+  lepers: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Brooklyn_Museum_-_The_Healing_of_Ten_Lepers_%28Gu%C3%A9rison_de_dix_l%C3%A9preux%29_-_James_Tissot_-_overall.jpg/960px-Brooklyn_Museum_-_The_Healing_of_Ten_Lepers_%28Gu%C3%A9rison_de_dix_l%C3%A9preux%29_-_James_Tissot_-_overall.jpg', credit: 'James Tissot', pos: 'center 30%' },
+  gethsemane: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Christ_in_Gethsemane.jpg/960px-Christ_in_Gethsemane.jpg', credit: 'Heinrich Hofmann', pos: 'center 18%' },
+  portrait: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Jesus_Christ_-_Hofmann.jpg/960px-Jesus_Christ_-_Hofmann.jpg', credit: 'Heinrich Hofmann', pos: 'center 12%' },
+  rock: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/The_house_built_upon_a_rock_LCCN2013647176.jpg/960px-The_house_built_upon_a_rock_LCCN2013647176.jpg', credit: 'Bible illustration', pos: 'center center' },
+  annunciation: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Fra_Angelico_-_The_Annunciation_-_WGA0455.jpg/960px-Fra_Angelico_-_The_Annunciation_-_WGA0455.jpg', credit: 'Fra Angelico', pos: 'center 40%' },
+  bartimaeus: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/William_Blake_-_Christ_Giving_Sight_to_Bartimaeus_-_Google_Art_Project.jpg/960px-William_Blake_-_Christ_Giving_Sight_to_Bartimaeus_-_Google_Art_Project.jpg', credit: 'William Blake', pos: 'center center' },
+  ascension: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Artus_Wolffort_-_Ascension_of_Jesus_Christ.jpg/960px-Artus_Wolffort_-_Ascension_of_Jesus_Christ.jpg', credit: 'Artus Wolffort', pos: 'center 25%' },
+  paralytic: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Christ_Healing_the_Paralytic_-_Dura-Europos_circa_232.jpg/960px-Christ_Healing_the_Paralytic_-_Dura-Europos_circa_232.jpg', credit: 'Dura-Europos, about 232', pos: 'center center' }
+};
+
+var artForPassage = [
+  'children','storm','loaves','sower','shepherd','shepherd2','rock','light','sermon','birds',
+  'samaritan','loaves','zacchaeus','portrait','children2','children','light','sermon','gethsemane','sower',
+  'nativity','children2','paralytic','ascension','sermon','wept','coin','sermon','water','prodigal',
+  'birds','portrait','light','children','samaritan','vine','sermon','fish','lepers','light',
+  'portrait','storm2','portrait','children3','fish2','annunciation','samaritan','portrait','portrait','gethsemane',
+  'magi','jairus','loaves','shepherd2','magi','loaves','sermon','bartimaeus','nativity','fish',
+  'children'
+];
+
+var STICKER_KEY = 'gospel-prayed-days';
+var STAR_SVG = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#E0A82E" d="M24 4l5.2 11.2L41 17l-8.6 8 2.2 12.2L24 31.2 13.4 37.2 15.6 25 7 17l11.8-1.8z"/></svg>';
+var speechState = 'idle';
+var speechGen = 0;
+var speechKeepAlive = null;
+
+function speechSupported() {
+  return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+}
+
+function showIllustration(idx) {
+  var img = document.getElementById('story-img');
+  var fig = document.getElementById('story-art');
+  var credit = document.getElementById('story-credit');
+  if (!img || !fig) return;
+  var key = artForPassage[idx] || 'children';
+  var entry = ART[key] || ART.children;
+  var L = ui[currentLang];
+  fig.classList.remove('art-missing');
+  img.alt = L.artAlt || '';
+  img.style.objectPosition = entry.pos || 'center center';
+  if (credit) credit.textContent = entry.credit || '';
+  img.onerror = function() {
+    if (img.getAttribute('data-try') !== 'default' && entry.src !== ART.children.src) {
+      img.setAttribute('data-try', 'default');
+      img.style.objectPosition = ART.children.pos;
+      if (credit) credit.textContent = ART.children.credit;
+      img.src = ART.children.src;
+      return;
+    }
+    fig.classList.add('art-missing');
+    if (credit) credit.textContent = '';
+  };
+  img.onload = function() {
+    if (img.naturalWidth > 0) fig.classList.remove('art-missing');
+  };
+  img.setAttribute('data-try', entry.src === ART.children.src ? 'default' : 'main');
+  img.src = entry.src;
+}
+
+function isRoseSunday(date) {
+  var year = date.getFullYear();
+  var easter = easterDate(year);
+  var d = new Date(year, date.getMonth(), date.getDate());
+  var adventStart = new Date(year, 11, 25);
+  var christmasDow = adventStart.getDay();
+  adventStart.setDate(25 - christmasDow - 21);
+  var gaudete = new Date(adventStart.getTime());
+  gaudete.setDate(adventStart.getDate() + 14);
+  if (d.getTime() === gaudete.getTime()) return true;
+  var laetare = new Date(easter.getTime());
+  laetare.setDate(easter.getDate() - 21);
+  return d.getTime() === laetare.getTime();
+}
+
+function adventWeekNumber(date) {
+  var year = date.getFullYear();
+  var start = new Date(year, 11, 25);
+  var christmasDow = start.getDay();
+  start.setDate(25 - christmasDow - 21);
+  var christmas = new Date(year, 11, 25);
+  var d = new Date(year, date.getMonth(), date.getDate());
+  if (d < start || d >= christmas) return 0;
+  var diff = Math.round((d.getTime() - start.getTime()) / 86400000);
+  var week = Math.floor(diff / 7) + 1;
+  if (week < 1) return 1;
+  if (week > 4) return 4;
+  return week;
+}
+
+function updateWreath(date, season) {
+  var el = document.getElementById('advent-wreath');
+  if (!el) return;
+  if (season !== 'advent') {
+    el.hidden = true;
+    return;
+  }
+  var week = adventWeekNumber(date);
+  if (!week) {
+    el.hidden = true;
+    return;
+  }
+  el.hidden = false;
+  var L = ui[currentLang];
+  var label = document.getElementById('wreath-label');
+  if (label) label.textContent = L.wreathLabel + ' · ' + L.weekWord + ' ' + week;
+  var candles = el.querySelectorAll('.candle');
+  for (var i = 0; i < candles.length; i++) {
+    candles[i].classList.toggle('lit', (i + 1) <= week);
+  }
+}
+
+function applySeasonColors(date) {
+  var season = toLiturgicalSeason(date);
+  var tone = isRoseSunday(date) ? 'rose' : season;
+  var root = document.documentElement;
+  var colors = {
+    advent:    { accent:'#6d3fa8', dim:'#542f86', glow:'rgba(109,63,168,0.16)', soft:'rgba(109,63,168,0.14)', rgb:'132, 96, 176' },
+    rose:      { accent:'#b12d62', dim:'#8e234e', glow:'rgba(177,45,98,0.16)', soft:'rgba(177,45,98,0.14)', rgb:'206, 122, 146' },
+    christmas: { accent:'#8a6418', dim:'#6e4e10', glow:'rgba(198,161,91,0.28)', soft:'rgba(198,161,91,0.28)', rgb:'214, 186, 120' },
+    lent:      { accent:'#6d3fa8', dim:'#542f86', glow:'rgba(109,63,168,0.16)', soft:'rgba(109,63,168,0.14)', rgb:'132, 96, 176' },
+    passion:   { accent:'#b42318', dim:'#8e1c14', glow:'rgba(180,35,24,0.16)', soft:'rgba(180,35,24,0.12)', rgb:'176, 54, 48' },
+    easter:    { accent:'#8a6418', dim:'#6e4e10', glow:'rgba(198,161,91,0.28)', soft:'rgba(198,161,91,0.28)', rgb:'214, 186, 120' },
+    ordinary:  { accent:'#1f7a45', dim:'#186438', glow:'rgba(31,122,69,0.16)', soft:'rgba(31,122,69,0.13)', rgb:'74, 128, 88' }
+  };
+  var c = colors[tone] || colors.ordinary;
+  root.style.setProperty('--accent', c.accent);
+  root.style.setProperty('--accent-dim', c.dim);
+  root.style.setProperty('--accent-glow', c.glow);
+  root.style.setProperty('--accent-soft', c.soft);
+  root.style.setProperty('--season', c.rgb);
+  root.setAttribute('data-season', tone);
+  var existingStyle = document.getElementById('selection-style');
+  if (existingStyle) existingStyle.remove();
+  var style = document.createElement('style');
+  style.id = 'selection-style';
+  style.textContent = '::selection { background: ' + c.accent + '59; }';
+  document.head.appendChild(style);
+  return season;
+}
+
+function chooseVoice(lang) {
+  var voices = [];
+  try { voices = speechSynthesis.getVoices() || []; } catch (e) { return null; }
+  var prefs = lang === 'es' ? ['es-MX', 'es-US', 'es-419', 'es'] : ['en-US', 'en'];
+  for (var i = 0; i < prefs.length; i++) {
+    var want = prefs[i].toLowerCase();
+    var exact = [];
+    var prefix = [];
+    for (var j = 0; j < voices.length; j++) {
+      var vl = (voices[j].lang || '').toLowerCase().replace('_', '-');
+      if (vl === want) exact.push(voices[j]);
+      else if (vl.indexOf(want) === 0) prefix.push(voices[j]);
+    }
+    var pool = exact.length ? exact : prefix;
+    if (!pool.length) continue;
+    for (var k = 0; k < pool.length; k++) {
+      if (pool[k].localService) return pool[k];
+    }
+    return pool[0];
+  }
+  return null;
+}
+
+function updateSpeechUI() {
+  var row = document.getElementById('read-aloud');
+  var label = document.getElementById('lbl-read');
+  var stopBtn = document.getElementById('btn-stop');
+  var readBtn = document.getElementById('btn-read');
+  if (!row || !label) return;
+  var L = ui[currentLang];
+  row.classList.toggle('is-playing', speechState === 'playing');
+  row.classList.toggle('is-paused', speechState === 'paused');
+  if (speechState === 'playing') label.textContent = L.pause;
+  else if (speechState === 'paused') label.textContent = L.resume;
+  else label.textContent = L.read;
+  if (stopBtn) stopBtn.hidden = speechState === 'idle';
+  if (readBtn) readBtn.setAttribute('aria-pressed', speechState === 'playing' ? 'true' : 'false');
+}
+
+function stopSpeech() {
+  speechGen++;
+  speechState = 'idle';
+  if (speechSupported()) {
+    try { speechSynthesis.cancel(); } catch (e) {}
+  }
+  updateSpeechUI();
+}
+
+function startSpeaking() {
+  if (!speechSupported()) return;
+  var L = ui[currentLang];
+  var passages = currentLang === 'es' ? passages_es : passages_en;
+  var now = new Date();
+  now.setDate(now.getDate() + dayOffset);
+  var p = passages[getDayOfYear(now) % passages.length];
+  if (!p) return;
+  var gen = ++speechGen;
+  var voice = chooseVoice(currentLang);
+  var lang = voice && voice.lang ? voice.lang : (currentLang === 'es' ? 'es-MX' : 'en-US');
+  var chunks = [p.ref + '. ' + p.text, p.explain];
+  try {
+    if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+  } catch (e) {}
+  chunks.forEach(function(chunk, i) {
+    var u = new SpeechSynthesisUtterance(chunk);
+    u.lang = lang;
+    if (voice) u.voice = voice;
+    u.rate = 0.92;
+    u.pitch = 1;
+    if (i === chunks.length - 1) {
+      u.onend = function() {
+        if (gen !== speechGen) return;
+        if (speechState === 'paused') return;
+        speechState = 'idle';
+        updateSpeechUI();
+      };
+    }
+    u.onerror = function(ev) {
+      if (gen !== speechGen) return;
+      var err = ev && ev.error;
+      if (err === 'interrupted' || err === 'canceled' || err === 'cancelled') return;
+      speechState = 'idle';
+      updateSpeechUI();
+    };
+    try {
+      speechSynthesis.speak(u);
+    } catch (err) {
+      speechState = 'idle';
+      updateSpeechUI();
+      return;
+    }
+  });
+  speechState = 'playing';
+  updateSpeechUI();
+  if (!speechKeepAlive) {
+    speechKeepAlive = setInterval(function() {
+      if (speechState !== 'playing' || !speechSupported()) return;
+      if (speechSynthesis.speaking && !speechSynthesis.paused) {
+        try {
+          speechSynthesis.pause();
+          speechSynthesis.resume();
+        } catch (e) {}
+      }
+    }, 12000);
+  }
+}
+
+function onReadClick() {
+  if (!speechSupported()) return;
+  if (speechState === 'playing') {
+    try { speechSynthesis.pause(); } catch (e) { stopSpeech(); return; }
+    speechState = 'paused';
+    updateSpeechUI();
+    return;
+  }
+  if (speechState === 'paused') {
+    try { speechSynthesis.resume(); } catch (e) { stopSpeech(); return; }
+    speechState = 'playing';
+    updateSpeechUI();
+    return;
+  }
+  startSpeaking();
+}
+
+function isoDate(d) {
+  var m = d.getMonth() + 1;
+  var day = d.getDate();
+  return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
+}
+
+function loadStickers() {
+  try {
+    var raw = localStorage.getItem(STICKER_KEY);
+    var data = raw ? JSON.parse(raw) : {};
+    if (!data || typeof data !== 'object') return {};
+    return data;
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveStickers(data) {
+  try { localStorage.setItem(STICKER_KEY, JSON.stringify(data)); } catch (e) {}
+}
+
+function renderStickers(justKey) {
+  var board = document.getElementById('sticker-board');
+  if (!board) return;
+  var L = ui[currentLang];
+  var data = loadStickers();
+  var today = new Date();
+  var todayKey = isoDate(today);
+  var sunday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
+  board.innerHTML = '';
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(sunday.getFullYear(), sunday.getMonth(), sunday.getDate() + i);
+    var key = isoDate(d);
+    var earned = !!data[key];
+    var cell = document.createElement('div');
+    cell.className = 'sticker-day' + (earned ? ' earned' : '') + (key === todayKey ? ' is-today' : '') + (justKey === key ? ' just-earned' : '');
+    var slot = document.createElement('div');
+    slot.className = 'sticker-slot';
+    slot.innerHTML = '<span class="sticker-star">' + (earned ? STAR_SVG : '') + '</span>';
+    var short = (L.weekShort && L.weekShort[i]) || L.days[i].slice(0, 2);
+    var dow = document.createElement('span');
+    dow.className = 'sticker-dow';
+    dow.textContent = short;
+    cell.appendChild(slot);
+    cell.appendChild(dow);
+    board.appendChild(cell);
+  }
+  var btn = document.getElementById('btn-prayed');
+  if (btn) {
+    btn.classList.toggle('is-done', !!data[todayKey]);
+    btn.setAttribute('aria-pressed', data[todayKey] ? 'true' : 'false');
+  }
+}
+
+function burstAt(cell) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var burst = document.createElement('span');
+  burst.className = 'star-burst';
+  burst.setAttribute('aria-hidden', 'true');
+  for (var i = 0; i < 8; i++) {
+    var s = document.createElement('i');
+    var ang = (Math.PI * 2 * i) / 8;
+    s.style.setProperty('--dx', (Math.cos(ang) * 26) + 'px');
+    s.style.setProperty('--dy', (Math.sin(ang) * 26) + 'px');
+    burst.appendChild(s);
+  }
+  cell.appendChild(burst);
+  setTimeout(function() {
+    if (burst.parentNode) burst.parentNode.removeChild(burst);
+  }, 750);
+}
+
+function markPrayed() {
+  var today = new Date();
+  var key = isoDate(today);
+  var data = loadStickers();
+  var btn = document.getElementById('btn-prayed');
+  if (data[key]) {
+    if (btn) {
+      btn.classList.remove('wiggle');
+      void btn.offsetWidth;
+      btn.classList.add('wiggle');
+    }
+    return;
+  }
+  data[key] = true;
+  saveStickers(data);
+  renderStickers(key);
+  var cell = document.querySelector('.sticker-day.just-earned');
+  if (cell) burstAt(cell);
+  var status = document.getElementById('sticker-status');
+  if (status) status.textContent = ui[currentLang].starAdded || '';
+}
+
+function renderDay() {
+  stopSpeech();
+  var L = ui[currentLang];
+  var passages = currentLang === 'es' ? passages_es : passages_en;
+  var now = new Date();
+  now.setDate(now.getDate() + dayOffset);
+
+  var season = applySeasonColors(now);
+  var seasonName = L.seasonNames[season] || L.seasonNames.ordinary;
+
+  document.getElementById('hero-title').textContent = L.heroTitle;
+  document.getElementById('hero-subtitle').textContent = L.heroSubtitle;
+  document.getElementById('lbl-gospel').textContent = L.lblGospel;
+  document.getElementById('lbl-meaning').textContent = L.lblMeaning;
+  document.getElementById('lbl-discuss').textContent = L.lblDiscuss;
+  document.getElementById('lbl-prayer-divider').textContent = L.lblPrayerDivider;
+  document.getElementById('lbl-pray').textContent = L.lblPray;
+  document.getElementById('btn-prev').textContent = L.btnPrev;
+  document.getElementById('btn-next').textContent = L.btnNext;
+  var lblRead = document.getElementById('lbl-read');
+  if (lblRead && speechState === 'idle') lblRead.textContent = L.read;
+  var lblStop = document.getElementById('lbl-stop');
+  if (lblStop) lblStop.textContent = L.stop;
+  var lblPrayed = document.getElementById('lbl-prayed');
+  if (lblPrayed) lblPrayed.textContent = L.prayed;
+  var lblSticker = document.getElementById('lbl-sticker');
+  if (lblSticker) lblSticker.textContent = L.stickerTitle;
+
+  document.getElementById('day-number').textContent = now.getDate();
+  document.getElementById('day-details').textContent = L.days[now.getDay()] + ', ' + L.months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+  document.getElementById('season-badge').textContent = seasonName;
+  document.getElementById('liturgical-day-label').textContent = seasonName;
+
+  document.getElementById('footer-text').textContent = '\u271D\uFE0E ' + seasonName + ' \u00B7 Ad Maiorem Dei Gloriam \u271D\uFE0E';
+
+  var doy = getDayOfYear(now);
+  var idx = doy % passages.length;
+  var p = passages[idx];
+
+  document.getElementById('scripture-ref').textContent = p.ref;
+  document.getElementById('scripture-text').textContent = p.text;
+  document.getElementById('explanation-text').textContent = p.explain;
+
+  var qList = document.getElementById('questions-list');
+  qList.innerHTML = '';
+  p.questions.forEach(function(q, i) {
+    var li = document.createElement('li');
+    li.innerHTML = '<span class="question-number">' + (i + 1) + '</span><span>' + q + '</span>';
+    qList.appendChild(li);
+  });
+
+  document.getElementById('family-prayer').innerHTML = '<p>' + p.prayer + '</p>';
+
+  var label = document.getElementById('nav-today-label');
+  if (dayOffset === 0) label.textContent = L.today;
+  else if (dayOffset === -1) label.textContent = L.yesterday;
+  else if (dayOffset === 1) label.textContent = L.tomorrow;
+  else label.textContent = L.months[now.getMonth()] + ' ' + now.getDate();
+
+  showIllustration(idx);
+  updateWreath(now, season);
+  renderStickers(null);
+}
+
+function setupStorybook() {
+  var readWrap = document.getElementById('read-aloud');
+  if (readWrap && speechSupported()) readWrap.hidden = false;
+  var readBtn = document.getElementById('btn-read');
+  if (readBtn) readBtn.addEventListener('click', onReadClick);
+  var stopBtn = document.getElementById('btn-stop');
+  if (stopBtn) stopBtn.addEventListener('click', stopSpeech);
+  var prayedBtn = document.getElementById('btn-prayed');
+  if (prayedBtn) prayedBtn.addEventListener('click', markPrayed);
+  if (speechSupported()) {
+    try { window.speechSynthesis.getVoices(); } catch (e) {}
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
 // LITURGICAL SEASON LOGIC
 // ═══════════════════════════════════════════════════════════════
 function easterDate(year) {
@@ -1554,87 +2325,8 @@ function getDayOfYear(date) {
   return Math.floor((date - start) / 86400000);
 }
 
-function applySeasonColors(date) {
-  var season = toLiturgicalSeason(date);
-  var root = document.documentElement;
-  var colors = {
-    advent:    { accent:'#9b72b0', dim:'#7d5a91', glow:'rgba(155,114,176,0.12)' },
-    christmas: { accent:'#d4af37', dim:'#b8962e', glow:'rgba(212,175,55,0.12)' },
-    lent:      { accent:'#9b72b0', dim:'#7d5a91', glow:'rgba(155,114,176,0.12)' },
-    passion:   { accent:'#c0392b', dim:'#a33225', glow:'rgba(192,57,43,0.12)' },
-    easter:    { accent:'#d4af37', dim:'#b8962e', glow:'rgba(212,175,55,0.12)' },
-    ordinary:  { accent:'#5a9e6f', dim:'#4a8a5e', glow:'rgba(90,158,111,0.12)' }
-  };
-  var c = colors[season] || colors.ordinary;
-  root.style.setProperty('--accent', c.accent);
-  root.style.setProperty('--accent-dim', c.dim);
-  root.style.setProperty('--accent-glow', c.glow);
-  var existingStyle = document.getElementById('selection-style');
-  if (existingStyle) existingStyle.remove();
-  var style = document.createElement('style');
-  style.id = 'selection-style';
-  style.textContent = '::selection { background: ' + c.accent + '59; }';
-  document.head.appendChild(style);
-  return season;
-}
-
-function renderDay() {
-  var L = ui[currentLang];
-  var passages = currentLang === 'es' ? passages_es : passages_en;
-  var now = new Date();
-  now.setDate(now.getDate() + dayOffset);
-
-  var season = applySeasonColors(now);
-  var seasonName = L.seasonNames[season] || L.seasonNames.ordinary;
-
-  // UI labels
-  document.getElementById('hero-title').textContent = L.heroTitle;
-  document.getElementById('hero-subtitle').textContent = L.heroSubtitle;
-  document.getElementById('lbl-gospel').textContent = L.lblGospel;
-  document.getElementById('lbl-meaning').textContent = L.lblMeaning;
-  document.getElementById('lbl-discuss').textContent = L.lblDiscuss;
-  document.getElementById('lbl-prayer-divider').textContent = L.lblPrayerDivider;
-  document.getElementById('lbl-pray').textContent = L.lblPray;
-  document.getElementById('btn-prev').textContent = L.btnPrev;
-  document.getElementById('btn-next').textContent = L.btnNext;
-
-  // Date header
-  document.getElementById('day-number').textContent = now.getDate();
-  document.getElementById('day-details').textContent = L.days[now.getDay()] + ', ' + L.months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
-  document.getElementById('season-badge').textContent = seasonName;
-  document.getElementById('liturgical-day-label').textContent = seasonName;
-
-  // Footer
-  document.getElementById('footer-text').textContent = '\u271D\uFE0E ' + seasonName + ' \u00B7 Ad Maiorem Dei Gloriam \u271D\uFE0E';
-
-  // Passage
-  var doy = getDayOfYear(now);
-  var idx = doy % passages.length;
-  var p = passages[idx];
-
-  document.getElementById('scripture-ref').textContent = p.ref;
-  document.getElementById('scripture-text').textContent = p.text;
-  document.getElementById('explanation-text').textContent = p.explain;
-
-  var qList = document.getElementById('questions-list');
-  qList.innerHTML = '';
-  p.questions.forEach(function(q, i) {
-    var li = document.createElement('li');
-    li.innerHTML = '<span class="question-number">' + (i + 1) + '</span><span>' + q + '</span>';
-    qList.appendChild(li);
-  });
-
-  document.getElementById('family-prayer').innerHTML = '<p>' + p.prayer + '</p>';
-
-  // Nav label
-  var label = document.getElementById('nav-today-label');
-  if (dayOffset === 0) label.textContent = L.today;
-  else if (dayOffset === -1) label.textContent = L.yesterday;
-  else if (dayOffset === 1) label.textContent = L.tomorrow;
-  else label.textContent = L.months[now.getMonth()] + ' ' + now.getDate();
-}
-
 function changeDay(delta) {
+  stopSpeech();
   var content = document.getElementById('gospel-content');
   content.classList.add('fading');
   setTimeout(function() {
@@ -1649,6 +2341,7 @@ function changeDay(delta) {
   document.getElementById('btn-en').classList.toggle('active', currentLang === 'en');
   document.getElementById('btn-es').classList.toggle('active', currentLang === 'es');
   document.documentElement.lang = currentLang;
+  setupStorybook();
   renderDay();
 })();
 </script>
