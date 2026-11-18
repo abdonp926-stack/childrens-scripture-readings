@@ -333,7 +333,7 @@
       display: flex;
       gap: 0.6rem;
       align-items: stretch;
-      margin: 0 0 1.15rem;
+      margin: 0 0 0.45rem;
     }
     .read-btn, .stop-btn, .prayed-btn, .day-nav button {
       cursor: pointer;
@@ -372,6 +372,28 @@
       box-shadow: 0 5px 0 rgba(192, 57, 43, 0.18);
     }
     .stop-btn:active { transform: translateY(2px); }
+    .read-row.is-playing .read-btn {
+      box-shadow: 0 7px 0 var(--accent-dim), 0 0 0 4px var(--accent-glow);
+    }
+    .read-row.is-playing .icon-pause { animation: read-pulse 1.2s ease-in-out infinite; }
+    .read-row.is-paused .read-btn {
+      background: linear-gradient(180deg, #5f8f72, var(--accent-dim));
+    }
+    @keyframes read-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .speech-note {
+      margin: 0.1rem 0.35rem 1.05rem;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.4;
+      color: var(--ink-soft);
+    }
+    .speech-note:empty { display: none; }
+    .speech-note.is-status { color: var(--accent); }
+    .speech-note.is-alert { color: #8e3b32; }
 
     /* Cards */
     .story-card {
@@ -664,6 +686,7 @@
     @media (prefers-reduced-motion: reduce) {
       .watercolor-blob, .candle.lit .flame, .candle.lit .flame-core,
       .sticker-day.just-earned .sticker-star, .star-burst i, .prayed-btn.wiggle,
+      .read-row.is-playing .icon-pause,
       .fade-content { animation: none !important; transition: none !important; }
     }
 
@@ -761,7 +784,7 @@
     </figure>
 
     <div class="read-row" id="read-aloud" hidden>
-      <button type="button" class="read-btn" id="btn-read">
+      <button type="button" class="read-btn" id="btn-read" aria-describedby="speech-note">
         <svg class="icon-play" viewBox="0 0 48 48" aria-hidden="true">
           <circle cx="24" cy="24" r="20" fill="rgba(255,255,255,0.18)"/>
           <path fill="#fff" d="M19 15.5v17l15-8.5z"/>
@@ -776,6 +799,7 @@
         <span id="lbl-stop">Stop</span>
       </button>
     </div>
+    <p id="speech-note" class="speech-note" role="status" aria-live="polite"></p>
 
     <article class="story-card gospel-card">
       <div class="scripture-label">
@@ -899,6 +923,12 @@ var ui = {
     pause: "Pause",
     resume: "Keep reading",
     stop: "Stop",
+    soundHint: "If it's quiet, turn the volume up. On an iPhone, the side switch mutes this too.",
+    readingNow: "Reading aloud\u2026",
+    pausedNote: "Paused.",
+    speechError: "We couldn't read that aloud. Turn the volume up \u2014 on an iPhone, the silent switch mutes this too.",
+    noSpeech: "This browser can't read aloud. You can still read today's Gospel right here.",
+    nothingToRead: "There's nothing to read for this day.",
     prayed: "We prayed today!",
     stickerTitle: "Our prayer stars",
     wreathLabel: "Advent wreath",
@@ -929,6 +959,12 @@ var ui = {
     pause: "Pausa",
     resume: "Sigue leyendo",
     stop: "Detener",
+    soundHint: "Si no se oye, sube el volumen. En un iPhone, el interruptor de silencio tambi\u00e9n lo calla.",
+    readingNow: "Leyendo en voz alta\u2026",
+    pausedNote: "En pausa.",
+    speechError: "No pudimos leer en voz alta. Sube el volumen: en un iPhone, el interruptor de silencio tambi\u00e9n lo calla.",
+    noSpeech: "Este navegador no puede leer en voz alta. Igual puedes leer el Evangelio de hoy aqu\u00ed.",
+    nothingToRead: "No hay nada para leer este d\u00eda.",
     prayed: "\u00a1Ya rezamos hoy!",
     stickerTitle: "Estrellas de oraci\u00f3n",
     wreathLabel: "Corona de Adviento",
@@ -1859,10 +1895,28 @@ var STICKER_KEY = 'gospel-prayed-days';
 var STAR_SVG = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#E0A82E" d="M24 4l5.2 11.2L41 17l-8.6 8 2.2 12.2L24 31.2 13.4 37.2 15.6 25 7 17l11.8-1.8z"/></svg>';
 var speechState = 'idle';
 var speechGen = 0;
-var speechKeepAlive = null;
+var speechChunks = [];
+var speechIndex = 0;
+var speechUtterances = [];
+var speechVoices = [];
+var speechProblem = '';
+var speechHeardStart = false;
+var speechRetryTimer = null;
+var speechRetryWhenVoices = false;
+var speechGestureAt = 0;
+var speechQueueing = false;
+var speechNativeHold = false;
+var iosSpeech = false;
 
 function speechSupported() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+}
+
+function isIOSDevice() {
+  var ua = navigator.userAgent || '';
+  if (/iPad|iPhone|iPod/.test(ua)) return true;
+  // iPadOS 13+ uses a desktop Mac user agent.
+  return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
 }
 
 function showIllustration(idx) {
@@ -1976,9 +2030,33 @@ function applySeasonColors(date) {
   return season;
 }
 
+function loadVoices() {
+  if (!speechSupported()) return;
+  try {
+    var list = speechSynthesis.getVoices() || [];
+    if (list.length) speechVoices = list;
+  } catch (e) {}
+}
+
+function onVoicesChanged() {
+  var had = speechVoices.length;
+  loadVoices();
+  if (speechQueueing) return;
+  // getVoices() is often empty until this event. If a tap already failed
+  // for that reason, try once more. The first speak() ran inside the tap,
+  // which is what iOS needs before a later speak.
+  if (!had && speechVoices.length && speechRetryWhenVoices && speechState === 'idle' && (Date.now() - speechGestureAt) < 5000) {
+    speechRetryWhenVoices = false;
+    startSpeaking();
+  }
+}
+
 function chooseVoice(lang) {
-  var voices = [];
-  try { voices = speechSynthesis.getVoices() || []; } catch (e) { return null; }
+  var voices = speechVoices;
+  if (!voices.length) {
+    try { voices = speechSynthesis.getVoices() || []; } catch (e) { voices = []; }
+    if (voices.length) speechVoices = voices;
+  }
   var prefs = lang === 'es' ? ['es-MX', 'es-US', 'es-419', 'es'] : ['en-US', 'en'];
   for (var i = 0; i < prefs.length; i++) {
     var want = prefs[i].toLowerCase();
@@ -1999,102 +2077,378 @@ function chooseVoice(lang) {
   return null;
 }
 
+function hasSpeakableText(text) {
+  return /[0-9A-Za-z\u00C0-\u024F]/.test(text || '');
+}
+
+// Short pieces stay under Chrome's ~15s network-voice cutoff, so we never
+// have to pause/resume on a timer (that timer silences iPhone Safari).
+function splitForSpeech(text) {
+  var clean = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!clean) return [];
+  var maxLen = 160;
+  var sentences = clean.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/g) || [clean];
+  var chunks = [];
+  for (var i = 0; i < sentences.length; i++) {
+    var sentence = sentences[i].replace(/\s+/g, ' ').trim();
+    if (!hasSpeakableText(sentence)) continue;
+    if (sentence.length <= maxLen) {
+      chunks.push(sentence);
+      continue;
+    }
+    var words = sentence.split(' ');
+    var buf = '';
+    for (var w = 0; w < words.length; w++) {
+      var next = buf ? buf + ' ' + words[w] : words[w];
+      if (next.length > maxLen && buf) {
+        if (hasSpeakableText(buf)) chunks.push(buf);
+        buf = words[w];
+      } else {
+        buf = next;
+      }
+    }
+    if (hasSpeakableText(buf)) chunks.push(buf);
+  }
+  return chunks;
+}
+
+function readingPlainText() {
+  var passages = currentLang === 'es' ? passages_es : passages_en;
+  if (!passages || !passages.length) return '';
+  var now = new Date();
+  now.setDate(now.getDate() + dayOffset);
+  var p = passages[getDayOfYear(now) % passages.length];
+  if (!p) return '';
+  var parts = [];
+  if (p.ref && String(p.ref).trim()) parts.push(String(p.ref).trim() + '.');
+  if (p.text && String(p.text).trim()) parts.push(String(p.text).trim());
+  if (p.explain && String(p.explain).trim()) parts.push(String(p.explain).trim());
+  return parts.join(' ');
+}
+
 function updateSpeechUI() {
   var row = document.getElementById('read-aloud');
   var label = document.getElementById('lbl-read');
   var stopBtn = document.getElementById('btn-stop');
   var readBtn = document.getElementById('btn-read');
-  if (!row || !label) return;
-  var L = ui[currentLang];
-  row.classList.toggle('is-playing', speechState === 'playing');
-  row.classList.toggle('is-paused', speechState === 'paused');
-  if (speechState === 'playing') label.textContent = L.pause;
-  else if (speechState === 'paused') label.textContent = L.resume;
-  else label.textContent = L.read;
-  if (stopBtn) stopBtn.hidden = speechState === 'idle';
-  if (readBtn) readBtn.setAttribute('aria-pressed', speechState === 'playing' ? 'true' : 'false');
+  var note = document.getElementById('speech-note');
+  var L = ui[currentLang] || ui.en;
+  var supported = speechSupported();
+  if (row) {
+    row.hidden = !supported;
+    row.classList.toggle('is-playing', supported && speechState === 'playing');
+    row.classList.toggle('is-paused', supported && speechState === 'paused');
+  }
+  if (label) {
+    if (!supported || speechState === 'idle') label.textContent = L.read;
+    else if (speechState === 'playing') label.textContent = L.pause;
+    else label.textContent = L.resume;
+  }
+  if (stopBtn) stopBtn.hidden = !supported || speechState === 'idle';
+  if (readBtn) readBtn.setAttribute('aria-pressed', supported && speechState !== 'idle' ? 'true' : 'false');
+  if (note) {
+    var message = '';
+    if (!supported) message = L.noSpeech;
+    else if (speechState === 'playing') message = L.readingNow;
+    else if (speechState === 'paused') message = L.pausedNote;
+    else if (speechProblem === 'empty') message = L.nothingToRead;
+    else if (speechProblem === 'error') message = L.speechError;
+    else message = L.soundHint;
+    note.textContent = message;
+    note.classList.toggle('is-status', supported && (speechState === 'playing' || speechState === 'paused'));
+    note.classList.toggle('is-alert', !supported || speechProblem === 'error' || speechProblem === 'empty');
+  }
+}
+
+function clearSpeechRetry() {
+  if (speechRetryTimer) {
+    clearTimeout(speechRetryTimer);
+    speechRetryTimer = null;
+  }
+}
+
+function resetSpeechEngine() {
+  if (!speechSupported()) return;
+  // cancel() does not clear a paused queue. resume() around it lets the
+  // next tap speak on Firefox, Safari, and Chrome.
+  try { speechSynthesis.resume(); } catch (e) {}
+  try { speechSynthesis.cancel(); } catch (e) {}
+  try { speechSynthesis.resume(); } catch (e) {}
 }
 
 function stopSpeech() {
+  var wasActive = speechState !== 'idle' || speechUtterances.length > 0;
   speechGen++;
   speechState = 'idle';
-  if (speechSupported()) {
-    try { speechSynthesis.cancel(); } catch (e) {}
-  }
+  speechIndex = 0;
+  speechProblem = '';
+  speechHeardStart = false;
+  speechRetryWhenVoices = false;
+  speechNativeHold = false;
+  clearSpeechRetry();
+  if (wasActive) resetSpeechEngine();
+  speechUtterances = [];
   updateSpeechUI();
 }
 
-function startSpeaking() {
-  if (!speechSupported()) return;
-  var L = ui[currentLang];
-  var passages = currentLang === 'es' ? passages_es : passages_en;
-  var now = new Date();
-  now.setDate(now.getDate() + dayOffset);
-  var p = passages[getDayOfYear(now) % passages.length];
-  if (!p) return;
-  var gen = ++speechGen;
-  var voice = chooseVoice(currentLang);
-  var lang = voice && voice.lang ? voice.lang : (currentLang === 'es' ? 'es-MX' : 'en-US');
-  var chunks = [p.ref + '. ' + p.text, p.explain];
-  try {
-    if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
-  } catch (e) {}
-  chunks.forEach(function(chunk, i) {
-    var u = new SpeechSynthesisUtterance(chunk);
-    u.lang = lang;
-    if (voice) u.voice = voice;
-    u.rate = 0.92;
-    u.pitch = 1;
-    if (i === chunks.length - 1) {
-      u.onend = function() {
-        if (gen !== speechGen) return;
-        if (speechState === 'paused') return;
-        speechState = 'idle';
-        updateSpeechUI();
-      };
-    }
-    u.onerror = function(ev) {
-      if (gen !== speechGen) return;
-      var err = ev && ev.error;
-      if (err === 'interrupted' || err === 'canceled' || err === 'cancelled') return;
+function enqueueUtterance(text, voice, lang, gen, index, isLast) {
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  if (voice) {
+    try { u.voice = voice; } catch (e) {}
+  }
+  // Some iOS versions stay silent when rate is not exactly 1.
+  u.rate = iosSpeech ? 1 : 0.92;
+  u.pitch = 1;
+  u.volume = 1;
+  u.onstart = function() {
+    if (gen !== speechGen) return;
+    speechHeardStart = true;
+    speechRetryWhenVoices = false;
+    speechIndex = index;
+    speechProblem = '';
+    if (speechState !== 'paused') speechState = 'playing';
+    updateSpeechUI();
+  };
+  u.onend = function() {
+    if (gen !== speechGen) return;
+    if (speechState === 'paused') return;
+    if (!isLast) return;
+    speechState = 'idle';
+    speechIndex = 0;
+    speechProblem = '';
+    speechUtterances = [];
+    updateSpeechUI();
+  };
+  u.onerror = function(ev) {
+    if (gen !== speechGen) return;
+    var err = ev && ev.error;
+    if (err === 'interrupted' || err === 'canceled' || err === 'cancelled') return;
+    speechGen++;
+    speechProblem = 'error';
+    speechState = 'idle';
+    speechHeardStart = false;
+    speechRetryWhenVoices = !speechVoices.length;
+    clearSpeechRetry();
+    speechUtterances = [];
+    try { speechSynthesis.cancel(); } catch (e) {}
+    try { speechSynthesis.resume(); } catch (e) {}
+    updateSpeechUI();
+  };
+  // Chrome and Safari can garbage-collect an utterance that only the
+  // queue knows about, which ends the reading immediately.
+  speechUtterances.push(u);
+  speechSynthesis.speak(u);
+}
+
+function queueFrom(startIndex, voice, lang, gen) {
+  var lastIndex = -1;
+  var i;
+  for (i = startIndex; i < speechChunks.length; i++) {
+    if (speechChunks[i]) lastIndex = i;
+  }
+  var queued = 0;
+  for (i = startIndex; i < speechChunks.length; i++) {
+    if (gen !== speechGen) break;
+    if (!speechChunks[i]) continue;
+    enqueueUtterance(speechChunks[i], voice, lang, gen, i, i === lastIndex);
+    queued++;
+  }
+  return queued;
+}
+
+function armSpeechWatchdog(gen, startIndex, voice, lang, attempt) {
+  clearSpeechRetry();
+  speechRetryTimer = setTimeout(function() {
+    speechRetryTimer = null;
+    if (gen !== speechGen || speechState !== 'playing' || speechHeardStart) return;
+    var alive = false;
+    try { alive = !!(speechSynthesis.speaking || speechSynthesis.pending); } catch (e) {}
+    if (alive) return;
+    if (attempt > 0) {
+      speechProblem = 'error';
       speechState = 'idle';
+      speechUtterances = [];
       updateSpeechUI();
-    };
+      return;
+    }
+    // Safari can drop an utterance that was queued in the same turn as
+    // cancel(). Speak again on the next turn; the tap already unlocked iOS.
+    speechGen++;
+    var newGen = speechGen;
+    speechHeardStart = false;
+    speechUtterances = [];
+    try { speechSynthesis.resume(); } catch (e) {}
     try {
-      speechSynthesis.speak(u);
-    } catch (err) {
+      queueFrom(startIndex, voice, lang, newGen);
+      speechSynthesis.resume();
+    } catch (e) {
+      speechProblem = 'error';
       speechState = 'idle';
       updateSpeechUI();
       return;
     }
-  });
-  speechState = 'playing';
-  updateSpeechUI();
-  if (!speechKeepAlive) {
-    speechKeepAlive = setInterval(function() {
-      if (speechState !== 'playing' || !speechSupported()) return;
-      if (speechSynthesis.speaking && !speechSynthesis.paused) {
-        try {
-          speechSynthesis.pause();
-          speechSynthesis.resume();
-        } catch (e) {}
-      }
-    }, 12000);
-  }
+    armSpeechWatchdog(newGen, startIndex, voice, lang, 1);
+  }, 600);
 }
 
-function onReadClick() {
-  if (!speechSupported()) return;
-  if (speechState === 'playing') {
-    try { speechSynthesis.pause(); } catch (e) { stopSpeech(); return; }
-    speechState = 'paused';
+// Speak from the click call stack. iOS Safari drops speech that starts
+// after an await, and macOS Safari stays silent until resume().
+function speakQueue(startIndex) {
+  if (!speechSupported() || speechQueueing) return;
+  speechQueueing = true;
+  try {
+  loadVoices();
+  var voice = chooseVoice(currentLang);
+  var lang = voice && voice.lang ? voice.lang : (currentLang === 'es' ? 'es-MX' : 'en-US');
+  var gen = speechGen;
+  speechProblem = '';
+  speechHeardStart = false;
+  clearSpeechRetry();
+
+  try { speechSynthesis.resume(); } catch (e) {}
+
+  var busy = false;
+  try { busy = !!(speechSynthesis.speaking || speechSynthesis.pending); } catch (e) {}
+  if (busy) {
+    try { speechSynthesis.cancel(); } catch (e) {}
+    try { speechSynthesis.resume(); } catch (e) {}
+  }
+  // Drop the previous batch only after cancel, so it can't be collected early.
+  speechUtterances = [];
+  if (busy) {
+    // The async cancel can erase the next utterance. A silent primer takes
+    // that hit so the real sentences, queued in this same tap, survive.
+    try {
+      var primer = new SpeechSynthesisUtterance(' ');
+      primer.volume = 0;
+      primer.rate = 1;
+      primer.lang = lang;
+      speechUtterances.push(primer);
+      speechSynthesis.speak(primer);
+    } catch (e) {}
+  }
+
+  var queued = 0;
+  try {
+    queued = queueFrom(startIndex, voice, lang, gen);
+  } catch (e) {
+    speechProblem = 'error';
+    speechState = 'idle';
+    try { speechSynthesis.cancel(); } catch (err) {}
     updateSpeechUI();
     return;
   }
-  if (speechState === 'paused') {
-    try { speechSynthesis.resume(); } catch (e) { stopSpeech(); return; }
-    speechState = 'playing';
+  if (gen !== speechGen || speechProblem) return;
+  if (!queued) {
+    speechProblem = 'empty';
+    speechState = 'idle';
     updateSpeechUI();
+    return;
+  }
+
+  try { speechSynthesis.resume(); } catch (e) {}
+  speechState = 'playing';
+  updateSpeechUI();
+  // Only retry after cancel(). A normal tap must not speak twice.
+  if (busy) armSpeechWatchdog(gen, startIndex, voice, lang, 0);
+  } finally {
+    speechQueueing = false;
+  }
+}
+
+function startSpeaking() {
+  if (!speechSupported()) {
+    speechProblem = 'error';
+    updateSpeechUI();
+    return;
+  }
+  var chunks = splitForSpeech(readingPlainText());
+  if (!chunks.length) {
+    speechProblem = 'empty';
+    speechState = 'idle';
+    updateSpeechUI();
+    return;
+  }
+  speechChunks = chunks;
+  speechIndex = 0;
+  speechGen++;
+  speechNativeHold = false;
+  speechRetryWhenVoices = speechVoices.length === 0;
+  speakQueue(0);
+}
+
+function pauseByCancel() {
+  speechGen++;
+  speechHeardStart = false;
+  speechNativeHold = false;
+  resetSpeechEngine();
+  speechUtterances = [];
+  updateSpeechUI();
+}
+
+function pauseSpeech() {
+  clearSpeechRetry();
+  speechState = 'paused';
+  // iPhone pause/resume often does nothing. Some desktop engines also ignore
+  // pause() and leave paused === false, so the reading would keep going.
+  if (iosSpeech) {
+    pauseByCancel();
+    return;
+  }
+  var held = false;
+  try {
+    speechSynthesis.pause();
+    held = !!speechSynthesis.paused;
+  } catch (e) {
+    held = false;
+  }
+  if (!held) {
+    pauseByCancel();
+    return;
+  }
+  speechNativeHold = true;
+  updateSpeechUI();
+}
+
+function resumeSpeech() {
+  if (iosSpeech || !speechNativeHold) {
+    speechNativeHold = false;
+    speakQueue(speechIndex);
+    return;
+  }
+  speechNativeHold = false;
+  try {
+    speechSynthesis.resume();
+  } catch (e) {
+    speakQueue(speechIndex);
+    return;
+  }
+  speechState = 'playing';
+  updateSpeechUI();
+  var gen = speechGen;
+  var index = speechIndex;
+  setTimeout(function() {
+    if (gen !== speechGen || speechState !== 'playing') return;
+    var stillPaused = false;
+    try { stillPaused = !!speechSynthesis.paused; } catch (e) {}
+    if (stillPaused) speakQueue(index);
+  }, 300);
+}
+
+function onReadClick() {
+  speechGestureAt = Date.now();
+  if (!speechSupported()) {
+    speechProblem = 'error';
+    updateSpeechUI();
+    return;
+  }
+  if (speechState === 'playing') {
+    pauseSpeech();
+    return;
+  }
+  if (speechState === 'paused') {
+    resumeSpeech();
     return;
   }
   startSpeaking();
@@ -2259,17 +2613,26 @@ function renderDay() {
 }
 
 function setupStorybook() {
-  var readWrap = document.getElementById('read-aloud');
-  if (readWrap && speechSupported()) readWrap.hidden = false;
+  iosSpeech = isIOSDevice();
+  var prayedBtn = document.getElementById('btn-prayed');
+  if (prayedBtn) prayedBtn.addEventListener('click', markPrayed);
+  if (!speechSupported()) {
+    updateSpeechUI();
+    return;
+  }
   var readBtn = document.getElementById('btn-read');
   if (readBtn) readBtn.addEventListener('click', onReadClick);
   var stopBtn = document.getElementById('btn-stop');
   if (stopBtn) stopBtn.addEventListener('click', stopSpeech);
-  var prayedBtn = document.getElementById('btn-prayed');
-  if (prayedBtn) prayedBtn.addEventListener('click', markPrayed);
-  if (speechSupported()) {
-    try { window.speechSynthesis.getVoices(); } catch (e) {}
-  }
+  try {
+    if (typeof speechSynthesis.addEventListener === 'function') {
+      speechSynthesis.addEventListener('voiceschanged', onVoicesChanged);
+    } else {
+      speechSynthesis.onvoiceschanged = onVoicesChanged;
+    }
+  } catch (e) {}
+  loadVoices();
+  updateSpeechUI();
 }
 
 // ═══════════════════════════════════════════════════════════════
